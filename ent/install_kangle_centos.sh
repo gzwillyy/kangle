@@ -64,16 +64,21 @@ detect_os() {
         OS="$ID"
         VERSION_ID_FULL="$VERSION_ID"
         VERSION_ID="${VERSION_ID%%.*}"
+    elif [ -f /etc/centos-release ]; then
+        OS="centos"
+        VERSION_ID_FULL=$(awk '{print $3}' /etc/centos-release)
+        VERSION_ID="${VERSION_ID%%.*}"
     else
         log "无法检测操作系统类型。"
         exit 1
-    fi
+    }
 
     if [[ "$OS" != "centos" ]]; then
-        log "此脚本仅适用于 CentOS 6、7-8 / Stream 8。"
+        log "此脚本仅适用于 CentOS 6、7、8 / Stream 8。"
         exit 1
-    fi
+    }
 }
+
 
 # 确定 CentOS 版本
 determine_version() {
@@ -368,7 +373,6 @@ install_kangle() {
     cd "$BASE_DIR" || exit
 }
 
-# 配置开机自启
 configure_autostart() {
     log "配置开机自启..."
 
@@ -385,29 +389,20 @@ configure_autostart() {
         # 对于 CentOS 7-8 / Stream 8，使用 systemd
         KANGLE_SERVICE_FILE="/etc/systemd/system/kangle.service"
 
-        if [ ! -f "$KANGLE_SERVICE_FILE" ]; then
-            log "创建 systemd 服务文件 kangle.service..."
-            cat > "$KANGLE_SERVICE_FILE" <<EOL
+        log "创建或更新 systemd 服务文件 kangle.service..."
+        cat > "$KANGLE_SERVICE_FILE" <<EOL
 [Unit]
 Description=Kangle Web Server
 After=network.target
 
 [Service]
-Type=simple
 ExecStart=$PREFIX/bin/kangle
-Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
 EOL
-
-            systemctl daemon-reload
-            systemctl enable kangle
-            systemctl start kangle
-            log "已创建并启用 systemd 服务文件 kangle.service。"
-        else
-            log "systemd 服务文件 kangle.service 已存在。"
-        fi
+        systemctl enable kangle
+        log "已创建并启用 systemd 服务文件 kangle.service。"
     fi
 }
 
