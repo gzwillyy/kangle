@@ -507,30 +507,6 @@ check_system_requirements() {
     log "系统资源检查通过。"
 }
 
-# 清理函数（恢复步骤）
-cleanup() {
-    log "执行清理操作..."
-    # 恢复防火墙规则
-    if [ -f /root/iptables.backup ]; then
-        iptables-restore < /root/iptables.backup || { log "恢复 iptables 规则失败。"; }
-        log "已恢复 iptables 规则。"
-    fi
-    # 恢复被停止的服务
-    for svc in "${SERVICES[@]}"; do
-        if [[ "$CENTOS_VERSION" -ge 7 ]]; then
-            systemctl enable "$svc" || true
-            systemctl start "$svc" || true
-            log "已启用并启动 $svc 服务。"
-        else
-            chkconfig "$svc" on || true
-            service "$svc" start || true
-            log "已启用并启动 $svc 服务。"
-        fi
-    done
-}
-
-# 捕获退出信号
-trap cleanup EXIT
 
 # =============================================================================
 # 主脚本流程
