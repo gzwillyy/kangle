@@ -323,7 +323,7 @@ install_kangle() {
     log "已下载 Kangle 安装包。"
 
     log "解压 Kangle 安装包..."
-    tar xzf "$KANGLE_TAR"  -C /tmp/kangle || { log "解压 Kangle 安装包失败。"; exit 1; }
+    tar xzf "$KANGLE_TAR"  -C /tmp/ || { log "解压 Kangle 安装包失败。"; exit 1; }
 
     rm -rf /tmp/kangle-ent-*.tar.gz
     cd /tmp/kangle || { log "进入 kangle 目录失败。"; exit 1; }
