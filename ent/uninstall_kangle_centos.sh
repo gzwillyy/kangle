@@ -87,15 +87,6 @@ remove_firewall_rules() {
         fi
     done
 
-    # 保存 iptables 规则
-    if [[ "$CENTOS_VERSION" -ge 7 ]]; then
-        iptables-save > /etc/sysconfig/iptables || { log "保存 iptables 规则失败。"; exit 1; }
-        systemctl restart iptables || { log "重启 iptables 服务失败。"; exit 1; }
-    else
-        /etc/init.d/iptables save || { log "保存 iptables 规则失败。"; exit 1; }
-        service iptables restart || { log "重启 iptables 服务失败。"; exit 1; }
-    fi
-
     log "iptables 规则已更新。"
 
 }

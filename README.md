@@ -14,6 +14,9 @@ bash <(curl -sSL https://linuxmirrors.cn/main.sh)
 yum -y install wget && wget -qO- https://github.com/gzwillyy/kangle/raw/dev/ent/install_kangle_centos.sh | sh -s /vhs/kangle
 ```
 
+```
+yum -y install wget && wget -qO- https://github.com/gzwillyy/kangle/raw/dev/ent/uninstall_kangle_centos.sh | sh
+```
 默认登录密码是什么?
 -------
 easypanel控制面板管理员后台：ip:3312/admin
