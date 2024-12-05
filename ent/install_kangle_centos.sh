@@ -325,7 +325,7 @@ install_kangle() {
     log "解压 Kangle 安装包..."
     tar xzf "$KANGLE_TAR"  -C /tmp/ || { log "解压 Kangle 安装包失败。"; exit 1; }
 
-    rm -rf /tmp/kangle-ent-*.tar.gz
+    rm -rf ${KANGLE_TAR}
     cd /tmp/kangle || { log "进入 kangle 目录失败。"; exit 1; }
 
     log "停止已有的 Kangle 实例（如果有）..."
@@ -517,6 +517,7 @@ cleanup() {
     rm -rf /tmp/kangle-dso-*.zip
     rm -rf /tmp/index.html
     rm -rf /tmp/dso
+    rm -rf /tmp/kangle
     log "安装残留文件已清除。"
 }
 
