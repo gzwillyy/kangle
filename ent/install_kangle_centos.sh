@@ -302,11 +302,12 @@ verify_checksum() {
 
 # 安装 Kangle
 install_kangle() {
-    log "安装 Kangle..."
+log "安装 Kangle..."
 
     # 保存当前目录
     BASE_DIR=$(pwd)
 
+    # 构造 Kangle 安装包文件名
     KANGLE_TAR="kangle-ent-${VERSION}${ARCH}.tar.gz"
     KANGLE_URL="https://github.com/gzwillyy/kangle/raw/dev/ent/${KANGLE_TAR}"
     KANGLE_CHECKSUM="your_expected_sha256_checksum_here"  # 替换为实际校验和
