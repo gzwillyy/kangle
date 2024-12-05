@@ -389,7 +389,7 @@ configure_autostart() {
 update_homepage() {
     log "更新 Kangle 首页..."
 
-    EASY_PANEL_URL="https://github.com/gzwillyy/kangle/raw/dev/easypanel/index.html"
+    EASY_PANEL_URL="https://github.com/gzwillyy/kangle/raw/dev/env/index.html"
     EASY_PANEL_CHECKSUM="your_easypanel_checksum_here"  # 替换为实际校验和
     TMP_INDEX="/tmp/index.html"
 
