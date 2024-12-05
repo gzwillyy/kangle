@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 set -e  # 在出现错误时立即退出脚本
 
 # =============================================================================
@@ -12,7 +11,11 @@ DSOVERSION="3.5.21.12"
 
 echo "设置软件源..."
 # 使用 printf 模拟用户输入：选择 1 并确认使用 HTTP 协议
-printf "1\nY\n" | bash <(curl -sSL https://linuxmirrors.cn/main.sh) --abroad
+curl -sSL https://linuxmirrors.cn/main.sh | bash --abroad <<EOF
+1
+Y
+EOF
+
 if [ $? -ne 0 ]; then
     echo "设置软件源失败。"
     exit 1
