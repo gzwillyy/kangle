@@ -121,14 +121,6 @@ set_arch() {
     log "检测到的 ARCH: $ARCH"
 }
 
-# 添加用户确认
-prompt_confirmation() {
-    read -p "是否继续执行 [y/N]? " choice
-    case "$choice" in 
-      y|Y ) log "继续执行...";;
-      * ) log "脚本已取消。"; exit 1;;
-    esac
-}
 
 # 备份防火墙规则
 backup_firewall() {
@@ -143,9 +135,6 @@ uninstall_firewalld() {
 
     if rpm -q firewalld >/dev/null 2>&1; then
         log "firewalld 已安装，准备卸载。"
-        prompt_confirmation
-        log "firewalld 已安装，正在停止并卸载..."
-
         # 停止 firewalld 服务
         systemctl stop firewalld || true
 
