@@ -71,12 +71,12 @@ detect_os() {
     else
         log "无法检测操作系统类型。"
         exit 1
-    }
+    fi
 
     if [[ "$OS" != "centos" ]]; then
         log "此脚本仅适用于 CentOS 6、7、8 / Stream 8。"
         exit 1
-    }
+    fi
 }
 
 
