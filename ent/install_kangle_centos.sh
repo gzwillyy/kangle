@@ -10,18 +10,9 @@ VERSION="3.5.21.16"
 DSOVERSION="3.5.21.12"
 
 echo "设置软件源..."
-# 使用临时文件模拟用户输入：选择 1 并确认使用 HTTP 协议
-INPUT_FILE=$(mktemp)
-echo -e "1\nY\n" > "$INPUT_FILE"
 
-bash <(curl -sSL https://linuxmirrors.cn/main.sh) --abroad < "$INPUT_FILE"
+bash <(curl -sSL https://linuxmirrors.cn/main.sh) --abroad
 
-rm -f "$INPUT_FILE"
-
-if [ $? -ne 0 ]; then
-    echo "设置软件源失败。"
-    exit 1
-fi
 
 # =============================================================================
 # 检查输入参数
