@@ -478,7 +478,6 @@ check_system_requirements() {
 
 # 设置error
 setuphost() {
-    chmod 700 /vhs/kangle/etc /vhs/kangle/var /vhs/kangle/nodewww/data;
     #error
     ERROR_ZIP="error.zip"
     ERROR_ZIP_URL="https://github.com/gzwillyy/kangle/raw/dev/ent/linux/kangle/${ERROR_ZIP}"
