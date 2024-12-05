@@ -1,13 +1,12 @@
 #!/bin/bash
 
-
 set -euo pipefail  # 遇到错误立即退出，未定义变量报错，管道命令失败时退出
 
 # =============================================================================
 # 常量和变量
 # =============================================================================
 
-VERSION="3.5.21.16"
+KANGLE_VERSION="3.5.21.16"
 DSOVERSION="3.5.21.12"
 PREFIX=""
 BASE_DIR=""
@@ -110,9 +109,14 @@ determine_pkg_manager() {
 
 # 设置 ARCH 变量
 set_arch() {
-    ARCH="-$CENTOS_VERSION"
-    if [ "$(uname -m)" = "x86_64" ]; then
-        ARCH="${ARCH}-x64"
+    if [ "$CENTOS_VERSION" == "6" ] || [ "$CENTOS_VERSION" == "7" ] || [ "$CENTOS_VERSION" == "8" ]; then
+        ARCH="-$CENTOS_VERSION"
+        if [ "$(uname -m)" = "x86_64" ]; then
+            ARCH="${ARCH}-x64"
+        fi
+    else
+        log "不支持的 CentOS 版本: $CENTOS_VERSION"
+        exit 1
     fi
     log "检测到的 ARCH: $ARCH"
 }
@@ -302,13 +306,13 @@ verify_checksum() {
 
 # 安装 Kangle
 install_kangle() {
-log "安装 Kangle..."
+    log "安装 Kangle..."
 
     # 保存当前目录
     BASE_DIR=$(pwd)
 
     # 构造 Kangle 安装包文件名
-    KANGLE_TAR="kangle-ent-${VERSION}${ARCH}.tar.gz"
+    KANGLE_TAR="kangle-ent-${KANGLE_VERSION}${ARCH}.tar.gz"
     KANGLE_URL="https://github.com/gzwillyy/kangle/raw/dev/ent/${KANGLE_TAR}"
     KANGLE_CHECKSUM="your_expected_sha256_checksum_here"  # 替换为实际校验和
 
@@ -357,7 +361,6 @@ log "安装 Kangle..."
         log "配置 Kangle 文件权限和所有权..."
         chown -R root:root "$PREFIX"
         chmod -R 755 "$PREFIX/bin"
-        # 根据需要调整其他文件和目录的权限
         log "Kangle 文件权限和所有权已配置。"
     }
     configure_kangle_permissions
