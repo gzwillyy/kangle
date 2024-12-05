@@ -1,12 +1,5 @@
 #!/bin/bash
 
-# =============================================================================
-# 脚本名称: install_kangle.sh
-# 描述: 在 CentOS 6、7、8/Stream 8 上安装和配置 Kangle Web 服务器
-# 作者: [您的姓名]
-# 日期: [日期]
-# 日志文件: /var/log/install_kangle.log
-# =============================================================================
 
 set -euo pipefail  # 遇到错误立即退出，未定义变量报错，管道命令失败时退出
 
@@ -60,6 +53,9 @@ check_arguments() {
         log "创建安装目录 $PREFIX..."
         mkdir -p "$PREFIX" || { log "创建安装目录失败。"; exit 1; }
     fi
+    # 设置目录所有权和权限（根据需要调整）
+    chown root:root "$PREFIX"
+    chmod 755 "$PREFIX"
 }
 
 # 检测操作系统类型和版本
@@ -67,6 +63,7 @@ detect_os() {
     if [ -f /etc/os-release ]; then
         . /etc/os-release
         OS="$ID"
+        VERSION_ID_FULL="$VERSION_ID"
         VERSION_ID="${VERSION_ID%%.*}"
     else
         log "无法检测操作系统类型。"
@@ -120,11 +117,29 @@ set_arch() {
     log "检测到的 ARCH: $ARCH"
 }
 
+# 添加用户确认
+prompt_confirmation() {
+    read -p "是否继续执行 [y/N]? " choice
+    case "$choice" in 
+      y|Y ) log "继续执行...";;
+      * ) log "脚本已取消。"; exit 1;;
+    esac
+}
+
+# 备份防火墙规则
+backup_firewall() {
+    log "备份当前 iptables 规则..."
+    iptables-save > /root/iptables.backup || { log "备份 iptables 规则失败。"; exit 1; }
+    log "已备份 iptables 规则到 /root/iptables.backup。"
+}
+
 # 检测并卸载 firewalld
 uninstall_firewalld() {
     log "检测并卸载 firewalld（如果存在）..."
 
     if rpm -q firewalld >/dev/null 2>&1; then
+        log "firewalld 已安装，准备卸载。"
+        prompt_confirmation
         log "firewalld 已安装，正在停止并卸载..."
 
         # 停止 firewalld 服务
@@ -167,6 +182,19 @@ stop_disable_services() {
     done
 }
 
+# 安装 iptables-services（针对 CentOS 7 及以上）
+install_iptables_services() {
+    if [[ "$CENTOS_VERSION" -ge 7 ]]; then
+        if ! rpm -q iptables-services >/dev/null 2>&1; then
+            log "iptables-services 未安装，正在安装..."
+            $PKG_MANAGER -y install iptables-services || { log "安装 iptables-services 失败。"; exit 1; }
+            log "iptables-services 已安装。"
+        else
+            log "iptables-services 已安装。"
+        fi
+    fi
+}
+
 # 更新系统包
 update_system() {
     log "更新系统包..."
@@ -192,11 +220,16 @@ install_dependencies() {
     done
 
     log "安装其他必要的软件包..."
-    $PKG_MANAGER -y install libjpeg-turbo libtiff libpng || { log "安装软件包失败。"; exit 1; }
+    $PKG_MANAGER -y install libjpeg-turbo libtiff libpng psmisc || { log "安装软件包失败。"; exit 1; }
+
+    # 安装 iptables-services（针对 CentOS 7 及以上）
+    install_iptables_services
 }
 
 # 使用 iptables 配置防火墙
 configure_firewall() {
+    backup_firewall
+
     log "配置防火墙..."
     PORTS=(80 443 3311 3312 3313 21)
 
@@ -213,13 +246,16 @@ configure_firewall() {
 
     log "保存 iptables 规则..."
     if [[ "$CENTOS_VERSION" -ge 7 ]]; then
-        service iptables save || { log "保存 iptables 规则失败。"; exit 1; }
+        # 保存规则到 /etc/sysconfig/iptables
+        iptables-save > /etc/sysconfig/iptables || { log "保存 iptables 规则失败。"; exit 1; }
+        # 启用并重启 iptables 服务
         systemctl enable iptables
-        systemctl restart iptables
+        systemctl restart iptables || { log "重启 iptables 服务失败。"; exit 1; }
     else
+        # 对于 CentOS 6
         /etc/init.d/iptables save || { log "保存 iptables 规则失败。"; exit 1; }
         chkconfig iptables on
-        service iptables restart
+        service iptables restart || { log "重启 iptables 服务失败。"; exit 1; }
     fi
 
     log "防火墙端口已通过 iptables 开放。"
@@ -315,6 +351,16 @@ install_kangle() {
     ./install.sh "$PREFIX" || { log "运行 Kangle 安装脚本失败。"; exit 1; }
     log "Kangle 安装脚本已运行。"
 
+    # 配置权限和所有权
+    configure_kangle_permissions() {
+        log "配置 Kangle 文件权限和所有权..."
+        chown -R root:root "$PREFIX"
+        chmod -R 755 "$PREFIX/bin"
+        # 根据需要调整其他文件和目录的权限
+        log "Kangle 文件权限和所有权已配置。"
+    }
+    configure_kangle_permissions
+
     # 启动 Kangle
     log "启动 Kangle..."
     "$PREFIX/bin/kangle"
@@ -329,9 +375,13 @@ configure_autostart() {
 
     if [[ "$CENTOS_VERSION" -eq 6 ]]; then
         # 对于 CentOS 6，使用 rc.local
-        echo "$PREFIX/bin/kangle" >> /etc/rc.d/rc.local
-        chmod +x /etc/rc.d/rc.local
-        log "已将 Kangle 添加到 /etc/rc.d/rc.local 以实现开机自启。"
+        if ! grep -Fxq "$PREFIX/bin/kangle" /etc/rc.d/rc.local; then
+            echo "$PREFIX/bin/kangle" >> /etc/rc.d/rc.local
+            chmod +x /etc/rc.d/rc.local
+            log "已将 Kangle 添加到 /etc/rc.d/rc.local 以实现开机自启。"
+        else
+            log "Kangle 已在 /etc/rc.d/rc.local 中配置。"
+        fi
     elif [[ "$CENTOS_VERSION" -ge 7 ]]; then
         # 对于 CentOS 7-8 / Stream 8，使用 systemd
         KANGLE_SERVICE_FILE="/etc/systemd/system/kangle.service"
@@ -366,20 +416,26 @@ EOL
 update_homepage() {
     log "更新 Kangle 首页..."
 
-    rm -rf "$PREFIX/www/index.html"
-
     EASY_PANEL_URL="https://github.com/gzwillyy/kangle/raw/dev/easypanel/index.html"
     EASY_PANEL_CHECKSUM="your_easypanel_checksum_here"  # 替换为实际校验和
-    log "下载首页文件..."
-    download_with_retry "$EASY_PANEL_URL" "$PREFIX/www/index.html"
-    # 如果有校验和，启用以下行
-    # verify_checksum "$PREFIX/www/index.html" "$EASY_PANEL_CHECKSUM" || { log "首页文件校验失败。"; exit 1; }
-    log "首页已更新。"
+    TMP_INDEX="/tmp/index.html"
 
-    # 重启 Kangle 以应用更改
-    log "重启 Kangle 以应用更改..."
-    "$PREFIX/bin/kangle" -q
-    "$PREFIX/bin/kangle" -z /var/cache/kangle
+    log "下载首页文件..."
+    download_with_retry "$EASY_PANEL_URL" "$TMP_INDEX"
+    # 如果有校验和，启用以下行
+    # verify_checksum "$TMP_INDEX" "$EASY_PANEL_CHECKSUM" || { log "首页文件校验失败。"; exit 1; }
+
+    # 仅当内容不同才替换
+    if [ ! -f "$PREFIX/www/index.html" ] || ! cmp -s "$TMP_INDEX" "$PREFIX/www/index.html"; then
+        mv "$TMP_INDEX" "$PREFIX/www/index.html" || { log "替换首页文件失败。"; exit 1; }
+        log "首页已更新。"
+        # 重启 Kangle 以应用更改
+        log "重启 Kangle 以应用更改..."
+        "$PREFIX/bin/kangle" -q
+        "$PREFIX/bin/kangle" -z /var/cache/kangle
+    else
+        log "首页文件未更改，跳过更新。"
+    fi
 }
 
 # 安装 DSO
@@ -389,22 +445,29 @@ install_dso() {
     DSO_ZIP="kangle-dso-${DSOVERSION}.zip"
     DSO_URL="https://github.com/gzwillyy/kangle/raw/dev/dso/${DSO_ZIP}"
     DSO_CHECKSUM="your_dso_checksum_here"  # 替换为实际校验和
+    TMP_DSO_ZIP="/tmp/$DSO_ZIP"
+
+    # 检查 DSO 是否已安装
+    if [ -d "$PREFIX/ext" ] && [ -d "$PREFIX/bin" ]; then
+        log "DSO 已安装，跳过安装。"
+        return
+    fi
 
     log "下载 DSO 包..."
-    download_with_retry "$DSO_URL" "$DSO_ZIP"
+    download_with_retry "$DSO_URL" "$TMP_DSO_ZIP"
     # 如果有校验和，启用以下行
-    # verify_checksum "$DSO_ZIP" "$DSO_CHECKSUM" || { log "DSO 包校验失败。"; exit 1; }
+    # verify_checksum "$TMP_DSO_ZIP" "$DSO_CHECKSUM" || { log "DSO 包校验失败。"; exit 1; }
     log "已下载 DSO 包。"
 
     log "解压 DSO 包..."
-    unzip -o "$DSO_ZIP" || { log "解压 DSO 包失败。"; exit 1; }
+    unzip -o "$TMP_DSO_ZIP" -d /tmp || { log "解压 DSO 包失败。"; exit 1; }
     log "已解压 DSO 包。"
 
-    cd dso || { log "进入 dso 目录失败。"; exit 1; }
+    cd /tmp/dso || { log "进入 dso 目录失败。"; exit 1; }
 
     log "复制 DSO 文件到安装目录..."
-    cp -rf bin "$PREFIX"
-    cp -rf ext "$PREFIX"
+    cp -rf bin "$PREFIX" || { log "复制 bin 目录失败。"; exit 1; }
+    cp -rf ext "$PREFIX" || { log "复制 ext 目录失败。"; exit 1; }
 
     # 启动 Kangle 以应用 DSO 更改
     log "启动 Kangle 以应用 DSO 更改..."
@@ -419,6 +482,52 @@ finish_installation() {
     log "Kangle 安装完成。"
 }
 
+# 检查系统资源
+check_system_requirements() {
+    REQUIRED_DISK_MB=10240  # 10GB
+    REQUIRED_MEMORY_MB=2048  # 2GB
+
+    AVAILABLE_DISK_MB=$(df / | tail -1 | awk '{print $4}')
+    AVAILABLE_MEMORY_MB=$(free -m | grep Mem | awk '{print $7}')
+
+    if [[ "$AVAILABLE_DISK_MB" -lt "$REQUIRED_DISK_MB" ]]; then
+        log "磁盘空间不足。需要至少 ${REQUIRED_DISK_MB}MB，可用 ${AVAILABLE_DISK_MB}MB。"
+        exit 1
+    fi
+
+    if [[ "$AVAILABLE_MEMORY_MB" -lt "$REQUIRED_MEMORY_MB" ]]; then
+        log "内存不足。需要至少 ${REQUIRED_MEMORY_MB}MB，可用 ${AVAILABLE_MEMORY_MB}MB。"
+        exit 1
+    fi
+
+    log "系统资源检查通过。"
+}
+
+# 清理函数（恢复步骤）
+cleanup() {
+    log "执行清理操作..."
+    # 恢复防火墙规则
+    if [ -f /root/iptables.backup ]; then
+        iptables-restore < /root/iptables.backup || { log "恢复 iptables 规则失败。"; }
+        log "已恢复 iptables 规则。"
+    fi
+    # 恢复被停止的服务
+    for svc in "${SERVICES[@]}"; do
+        if [[ "$CENTOS_VERSION" -ge 7 ]]; then
+            systemctl enable "$svc" || true
+            systemctl start "$svc" || true
+            log "已启用并启动 $svc 服务。"
+        else
+            chkconfig "$svc" on || true
+            service "$svc" start || true
+            log "已启用并启动 $svc 服务。"
+        fi
+    done
+}
+
+# 捕获退出信号
+trap cleanup EXIT
+
 # =============================================================================
 # 主脚本流程
 # =============================================================================
@@ -432,6 +541,8 @@ main() {
     determine_version
     determine_pkg_manager
     set_arch
+
+    check_system_requirements
 
     uninstall_firewalld
     stop_disable_services
