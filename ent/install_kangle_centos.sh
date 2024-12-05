@@ -47,7 +47,7 @@ if [[ "$VERSION_ID" == "6" ]]; then
 elif [[ "$VERSION_ID" == "7" || "$VERSION_ID" == "8" ]]; then
     CENTOS_VERSION=$VERSION_ID
 elif [[ "$VERSION_ID" == "Stream" ]]; then
-    # 对于 CentOS Stream 8，VERSION_ID 仍为 "8"
+    # 对于 CentOS Stream 8，VERSION_ID 通常仍为 "8"
     CENTOS_VERSION="8"
 else
     echo "不支持的 CentOS 版本: $VERSION_ID"
@@ -119,10 +119,30 @@ done
 echo "安装必要的软件包..."
 
 # 更新包管理器
-sudo $PKG_MANAGER -y update
+if [[ "$PKG_MANAGER" == "dnf" ]]; then
+    sudo dnf -y upgrade
+else
+    sudo yum -y update
+fi
 
-# 安装软件包
-sudo $PKG_MANAGER -y install libjpeg-turbo libtiff libpng unzip wget
+# =============================================================================
+# 依赖项检查
+# =============================================================================
+
+echo "检查并安装必要的依赖项..."
+
+REQUIRED_COMMANDS=("wget" "unzip")
+for cmd in "${REQUIRED_COMMANDS[@]}"; do
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+        echo "缺少命令: $cmd，正在安装..."
+        sudo $PKG_MANAGER -y install "$cmd"
+    else
+        echo "命令 $cmd 已存在。"
+    fi
+done
+
+# 安装其他必要的软件包
+sudo $PKG_MANAGER -y install libjpeg-turbo libtiff libpng
 
 # =============================================================================
 # 配置防火墙
@@ -133,11 +153,11 @@ echo "配置防火墙..."
 PORTS=(80 443 3311 3312 3313 21)
 
 if [[ "$CENTOS_VERSION" -ge 7 ]]; then
-    echo "使用 iptables 配置防火墙端口..."
+    echo "使用 firewall-cmd 配置防火墙端口..."
     for port in "${PORTS[@]}"; do
-        sudo /sbin/iptables -I INPUT -p tcp --dport "$port" -j ACCEPT
+        sudo firewall-cmd --permanent --add-port=${port}/tcp
     done
-    sudo /etc/rc.d/init.d/iptables save
+    sudo firewall-cmd --reload
     echo "防火墙端口已开放。"
 else
     echo "使用 iptables 配置防火墙端口..."
@@ -172,14 +192,18 @@ fi
 
 echo "安装 Kangle..."
 
+# 保存当前目录
+BASE_DIR=$(pwd)
+
 KANGLE_TAR="kangle-ent-${VERSION}${ARCH}.tar.gz"
 KANGLE_URL="https://github.com/gzwillyy/kangle/raw/dev/ent/${KANGLE_TAR}"
 
-wget "$KANGLE_URL" -O "$KANGLE_TAR"
+wget "$KANGLE_URL" -O "$KANGLE_TAR" || { echo "下载 Kangle 安装包失败。"; exit 1; }
 echo "已下载 Kangle 安装包。"
 
-tar xzf "$KANGLE_TAR"
-cd kangle || { echo "解压 Kangle 安装包失败。"; exit 1; }
+tar xzf "$KANGLE_TAR" || { echo "解压 Kangle 安装包失败。"; exit 1; }
+
+cd kangle || { echo "进入 kangle 目录失败。"; exit 1; }
 
 # 停止已有的 Kangle 实例
 echo "停止已有的 Kangle 实例（如果有）..."
@@ -191,12 +215,18 @@ mkdir -p "$PREFIX"
 
 # 下载许可文件
 LICENSE_URL="https://github.com/gzwillyy/kangle/raw/dev/ent/license/Ultimate/license.txt"
-wget "$LICENSE_URL" -O "$PREFIX/license.txt"
+wget "$LICENSE_URL" -O "$PREFIX/license.txt" || { echo "下载许可文件失败。"; exit 1; }
 echo "已下载许可文件。"
+
+# 确保 install.sh 具有执行权限
+if [ ! -x ./install.sh ]; then
+    chmod +x install.sh || { echo "设置 install.sh 执行权限失败。"; exit 1; }
+    echo "已为 install.sh 设置执行权限。"
+fi
 
 # 运行安装脚本
 echo "运行 Kangle 安装脚本..."
-sudo ./install.sh "$PREFIX"
+sudo ./install.sh "$PREFIX" || { echo "运行 Kangle 安装脚本失败。"; exit 1; }
 echo "Kangle 安装脚本已运行。"
 
 # 启动 Kangle
@@ -250,7 +280,7 @@ echo "更新 Kangle 首页..."
 
 sudo rm -rf "$PREFIX/www/index.html"
 EASY_PANEL_URL="https://github.com/gzwillyy/kangle/raw/dev/easypanel/index.html"
-wget "$EASY_PANEL_URL" -O "$PREFIX/www/index.html"
+wget "$EASY_PANEL_URL" -O "$PREFIX/www/index.html" || { echo "下载首页文件失败。"; exit 1; }
 echo "首页已更新。"
 
 # 重启 Kangle 以应用更改
@@ -258,7 +288,8 @@ echo "重启 Kangle 以应用更改..."
 sudo $PREFIX/bin/kangle -q
 sudo $PREFIX/bin/kangle -z /var/cache/kangle
 
-cd ..
+# 返回原始目录
+cd "$BASE_DIR" || exit
 
 # =============================================================================
 # 安装 DSO
@@ -269,10 +300,10 @@ echo "安装 DSO..."
 DSO_ZIP="kangle-dso-${DSOVERSION}.zip"
 DSO_URL="https://github.com/gzwillyy/kangle/raw/dev/dso/${DSO_ZIP}"
 
-wget "$DSO_URL" -O "$DSO_ZIP"
+wget "$DSO_URL" -O "$DSO_ZIP" || { echo "下载 DSO 包失败。"; exit 1; }
 echo "已下载 DSO 包。"
 
-unzip -o "$DSO_ZIP"
+unzip -o "$DSO_ZIP" || { echo "解压 DSO 包失败。"; exit 1; }
 echo "已解压 DSO 包。"
 
 cd dso || { echo "进入 dso 目录失败。"; exit 1; }
@@ -284,7 +315,7 @@ sudo cp -rf ext "$PREFIX"
 echo "启动 Kangle 以应用 DSO 更改..."
 sudo $PREFIX/bin/kangle
 
-cd ..
+cd "$BASE_DIR" || exit
 
 # =============================================================================
 # 完成安装
