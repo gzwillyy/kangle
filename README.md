@@ -9,11 +9,17 @@ CPU：单核
 操作系统：centos 6 x64
 安装时间：普通VPS大约在2-5分钟左右
 
+设置源
 ```
 bash <(curl -sSL https://linuxmirrors.cn/main.sh)
+```
+
+安装
+```
 yum -y install wget && wget -qO- https://github.com/gzwillyy/kangle/raw/dev/ent/install_kangle_centos.sh | sh -s /vhs/kangle
 ```
 
+卸载
 ```
 yum -y install wget && wget -qO- https://github.com/gzwillyy/kangle/raw/dev/ent/uninstall_kangle_centos.sh | sh
 ```
