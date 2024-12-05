@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTTP 400 错误 - 请求无效</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', Arial, sans-serif;
+        background: #f8f9fa;
+        color: #333;
+    }
+
+    header {
+        background-color: #007bff;
+        color: #fff;
+        padding: 20px 10px;
+        text-align: center;
+        position: relative;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 1.5rem;
+    }
+
+    header .subtitle {
+        font-size: 1rem;
+    }
+
+    .language-switcher {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .language-switcher select {
+        padding: 5px;
+        border: none;
+        border-radius: 4px;
+        background-color: #fff;
+        color: #333;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        line-height: 1.6;
+    }
+
+    h2 {
+        color: #dc3545;
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    p {
+        margin: 10px 0;
+        font-size: 1rem;
+    }
+
+    ul {
+        padding-left: 20px;
+        margin: 10px 0;
+        font-size: 1rem;
+    }
+
+    .rtl {
+        direction: rtl;
+        text-align: right;
+    }
+
+    .rtl ul {
+        padding-right: 20px;
+        padding-left: 0;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        header {
+            padding: 15px;
+        }
+
+        header h1 {
+            font-size: 1.3rem;
+        }
+
+        header .subtitle {
+            font-size: 0.9rem;
+        }
+
+        .language-switcher select {
+            font-size: 0.9rem;
+        }
+
+        .container {
+            padding: 15px;
+            margin: 10px;
+        }
+
+        h2 {
+            font-size: 1rem;
+        }
+
+        p, ul {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        header h1 {
+            font-size: 1.1rem;
+        }
+
+        header .subtitle {
+            font-size: 0.8rem;
+        }
+
+        .language-switcher {
+            top: 5px;
+            right: 5px;
+        }
+
+        .container {
+            padding: 10px;
+            margin: 5px;
+        }
+
+        h2 {
+            font-size: 0.9rem;
+        }
+
+        p, ul {
+            font-size: 0.8rem;
+        }
+    }
+</style>
+<script>
+    const translations = {
+        zh: {
+            title: "HTTP 错误 400",
+            subtitle: "糟糕！您的请求可能有问题。",
+            whatItMeans: "这意味着什么？",
+            meaning: "服务器无法理解您的请求，可能是由于以下原因：",
+            reasons: [
+                "上传了服务器不支持的文件类型（如 PHP 文件）。",
+                "请求的格式或内容违反了服务器规则。"
+            ],
+            howToFix: "如何解决？",
+            fixes: [
+                "如果您上传了文件，请确认文件类型是服务器支持的。",
+                "检查请求的内容和格式，然后重新尝试。"
+            ]
+        },
+        en: {
+            title: "HTTP Error 400",
+            subtitle: "Oops! Something might be wrong with your request.",
+            whatItMeans: "What does this mean?",
+            meaning: "The server could not understand your request, possibly due to:",
+            reasons: [
+                "You uploaded a file type not supported by the server (e.g., PHP file).",
+                "The format or content of the request violates server rules."
+            ],
+            howToFix: "How to fix it?",
+            fixes: [
+                "If you uploaded a file, ensure the file type is supported by the server.",
+                "Check the content and format of your request, then try again."
+            ]
+        },
+        ar: {
+            title: "خطأ HTTP 400",
+            subtitle: "عذرًا! قد تكون هناك مشكلة في طلبك.",
+            whatItMeans: "ماذا يعني هذا؟",
+            meaning: "لم يتمكن الخادم من فهم طلبك، ربما بسبب:",
+            reasons: [
+                "قمت بتحميل نوع ملف غير مدعوم من قبل الخادم (مثل ملف PHP).",
+                "تنسيق أو محتوى الطلب ينتهك قواعد الخادم."
+            ],
+            howToFix: "كيف يمكن إصلاح ذلك؟",
+            fixes: [
+                "إذا قمت بتحميل ملف، تأكد من أن نوع الملف مدعوم من الخادم.",
+                "تحقق من محتوى وتنسيق طلبك، ثم حاول مرة أخرى."
+            ]
+        },
+        pt: {
+            title: "Erro HTTP 400",
+            subtitle: "Ops! Algo pode estar errado com sua solicitação.",
+            whatItMeans: "O que isso significa?",
+            meaning: "O servidor não conseguiu entender sua solicitação, possivelmente devido a:",
+            reasons: [
+                "Você enviou um tipo de arquivo não suportado pelo servidor (por exemplo, arquivo PHP).",
+                "O formato ou o conteúdo da solicitação viola as regras do servidor."
+            ],
+            howToFix: "Como corrigir?",
+            fixes: [
+                "Se você enviou um arquivo, certifique-se de que o tipo de arquivo é suportado pelo servidor.",
+                "Verifique o conteúdo e o formato da sua solicitação e tente novamente."
+            ]
+        }
+    };
+
+    function changeLanguage(lang) {
+        const content = translations[lang];
+        document.querySelector("h1").textContent = content.title;
+        document.querySelector(".subtitle").textContent = content.subtitle;
+        document.querySelector(".what-it-means").textContent = content.whatItMeans;
+        document.querySelector(".meaning").textContent = content.meaning;
+
+        const reasonsList = document.querySelector(".reasons");
+        reasonsList.innerHTML = content.reasons.map(reason => `<li>${reason}</li>`).join("");
+
+        document.querySelector(".how-to-fix").textContent = content.howToFix;
+        const fixesList = document.querySelector(".fixes");
+        fixesList.innerHTML = content.fixes.map(fix => `<li>${fix}</li>`).join("");
+
+        if (lang === "ar") {
+            document.body.classList.add("rtl");
+            document.documentElement.dir = "rtl";
+        } else {
+            document.body.classList.remove("rtl");
+            document.documentElement.dir = "ltr";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => changeLanguage("zh"));
+</script>
+</head>
+<body>
+<header>
+    <h1>HTTP 错误 400</h1>
+    <p class="subtitle">糟糕！您的请求可能有问题。</p>
+    <div class="language-switcher">
+        <select onchange="changeLanguage(this.value)">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+            <option value="pt">Português</option>
+        </select>
+    </div>
+</header>
+
+<div class="container">
+    <h2 class="what-it-means">这意味着什么？</h2>
+    <p class="meaning">服务器无法理解您的请求，可能是由于以下原因：</p>
+    <ul class="reasons"></ul>
+
+    <h2 class="how-to-fix">如何解决？</h2>
+    <ul class="fixes"></ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTTP 404 错误 - 页面未找到</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', Arial, sans-serif;
+        background: #f8f9fa;
+        color: #333;
+    }
+
+    header {
+        background-color: #6c757d;
+        color: #fff;
+        padding: 20px 10px;
+        text-align: center;
+        position: relative;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+    }
+
+    header p {
+        margin: 5px 0 0;
+        font-size: 1rem;
+    }
+
+    .language-switcher {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .language-switcher select {
+        padding: 5px;
+        border: none;
+        border-radius: 4px;
+        background-color: #fff;
+        color: #333;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        line-height: 1.6;
+    }
+
+    h2 {
+        color: #dc3545;
+        font-size: 1.5rem;
+    }
+
+    p {
+        margin: 10px 0;
+    }
+
+    ul {
+        padding-left: 20px;
+        margin: 10px 0;
+    }
+
+    a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    footer {
+        text-align: center;
+        margin-top: 30px;
+        padding: 10px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    /* 从右到左布局 */
+    body.rtl {
+        direction: rtl;
+        text-align: right;
+    }
+
+    body.rtl ul {
+        padding-right: 20px;
+        padding-left: 0;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        header {
+            padding: 15px;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+        }
+
+        header p {
+            font-size: 0.9rem;
+        }
+
+        .language-switcher select {
+            font-size: 0.9rem;
+        }
+
+        .container {
+            padding: 20px;
+            margin: 10px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+        }
+
+        p, ul {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        header h1 {
+            font-size: 1.3rem;
+        }
+
+        header p {
+            font-size: 0.8rem;
+        }
+
+        .language-switcher {
+            top: 5px;
+            right: 5px;
+        }
+
+        .container {
+            padding: 15px;
+            margin: 5px;
+        }
+
+        h2 {
+            font-size: 1rem;
+        }
+
+        p, ul {
+            font-size: 0.8rem;
+        }
+    }
+</style>
+<script>
+    const translations = {
+        zh: {
+            title: "HTTP 错误 404",
+            subtitle: "页面未找到",
+            whatItMeans: "这意味着什么？",
+            meaning: "没有找到您要访问的页面，请检查您是否输入了正确的 URL。",
+            suggestions: "请尝试以下操作：",
+            actions: [
+                "如果您已经在地址栏中输入该网页的地址，请确认其拼写正确。",
+                "打开主页，然后查找指向您感兴趣信息的链接。",
+                "单击 <a href='javascript:history.back(1)'>后退</a> 链接，尝试其他链接。"
+            ]
+        },
+        en: {
+            title: "HTTP Error 404",
+            subtitle: "Page Not Found",
+            whatItMeans: "What does this mean?",
+            meaning: "The page you are looking for was not found. Please check if you entered the correct URL.",
+            suggestions: "Please try the following:",
+            actions: [
+                "If you typed the address in the address bar, make sure it is spelled correctly.",
+                "Open the home page and look for links to the information you want.",
+                "Click the <a href='javascript:history.back(1)'>Back</a> link to try another link."
+            ]
+        },
+        ar: {
+            title: "خطأ HTTP 404",
+            subtitle: "الصفحة غير موجودة",
+            whatItMeans: "ماذا يعني هذا؟",
+            meaning: "الصفحة التي تبحث عنها غير موجودة. يرجى التحقق مما إذا كنت قد أدخلت عنوان URL صحيحًا.",
+            suggestions: "يرجى المحاولة بما يلي:",
+            actions: [
+                "إذا قمت بكتابة العنوان في شريط العناوين، فتأكد من صحة الإملاء.",
+                "افتح الصفحة الرئيسية وابحث عن الروابط للمعلومات التي تريدها.",
+                "انقر فوق رابط <a href='javascript:history.back(1)'>رجوع</a> لتجربة رابط آخر."
+            ]
+        },
+        pt: {
+            title: "Erro HTTP 404",
+            subtitle: "Página Não Encontrada",
+            whatItMeans: "O que isso significa?",
+            meaning: "A página que você está procurando não foi encontrada. Verifique se você digitou a URL correta.",
+            suggestions: "Por favor, tente o seguinte:",
+            actions: [
+                "Se você digitou o endereço na barra de endereços, certifique-se de que está escrito corretamente.",
+                "Abra a página inicial e procure os links para as informações desejadas.",
+                "Clique no link <a href='javascript:history.back(1)'>Voltar</a> para tentar outro link."
+            ]
+        }
+    };
+
+    function changeLanguage(lang) {
+        const content = translations[lang];
+        document.querySelector("h1").textContent = content.title;
+        document.querySelector("header p").textContent = content.subtitle;
+        document.querySelector(".what-it-means").textContent = content.whatItMeans;
+        document.querySelector(".meaning").textContent = content.meaning;
+
+        document.querySelector(".suggestions").textContent = content.suggestions;
+        const actionsList = document.querySelector(".actions");
+        actionsList.innerHTML = content.actions.map(action => `<li>${action}</li>`).join("");
+
+        if (lang === "ar") {
+            document.body.classList.add("rtl");
+            document.documentElement.dir = "rtl";
+        } else {
+            document.body.classList.remove("rtl");
+            document.documentElement.dir = "ltr";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => changeLanguage("zh"));
+</script>
+</head>
+<body>
+<header>
+    <h1>HTTP 错误 404</h1>
+    <p>页面未找到</p>
+    <div class="language-switcher">
+        <select onchange="changeLanguage(this.value)">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+            <option value="pt">Português</option>
+        </select>
+    </div>
+</header>
+
+<div class="container">
+    <h2 class="what-it-means">这意味着什么？</h2>
+    <p class="meaning">没有找到您要访问的页面，请检查您是否输入了正确的 URL。</p>
+
+    <h2 class="suggestions">请尝试以下操作：</h2>
+    <ul class="actions"></ul>
+</div>
+</body>
+</html>

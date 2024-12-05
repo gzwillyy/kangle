@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTTP 503 错误 - 服务暂时不可用</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', Arial, sans-serif;
+        background: #f8f9fa;
+        color: #333;
+    }
+
+    header {
+        background-color: #ffc107;
+        color: #fff;
+        padding: 20px 10px;
+        text-align: center;
+        position: relative;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+    }
+
+    header p {
+        margin: 5px 0 0;
+        font-size: 1rem;
+    }
+
+    .language-switcher {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .language-switcher select {
+        padding: 5px;
+        border: none;
+        border-radius: 4px;
+        background-color: #fff;
+        color: #333;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        line-height: 1.6;
+    }
+
+    h2 {
+        color: #dc3545;
+        font-size: 1.5rem;
+    }
+
+    p {
+        margin: 10px 0;
+    }
+
+    ul {
+        margin: 10px 0;
+        padding-left: 20px;
+    }
+
+    a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    footer {
+        text-align: center;
+        margin-top: 30px;
+        padding: 10px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        header {
+            padding: 15px;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+        }
+
+        header p {
+            font-size: 0.9rem;
+        }
+
+        .language-switcher select {
+            font-size: 0.9rem;
+        }
+
+        .container {
+            padding: 20px;
+            margin: 10px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+        }
+
+        p, ul {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        header h1 {
+            font-size: 1.3rem;
+        }
+
+        header p {
+            font-size: 0.8rem;
+        }
+
+        .language-switcher {
+            top: 5px;
+            right: 5px;
+        }
+
+        .container {
+            padding: 15px;
+            margin: 5px;
+        }
+
+        h2 {
+            font-size: 1rem;
+        }
+
+        p, ul {
+            font-size: 0.8rem;
+        }
+    }
+
+    /* 从右到左布局 */
+    body.rtl {
+        direction: rtl;
+        text-align: right;
+    }
+
+    body.rtl ul {
+        padding-right: 20px;
+        padding-left: 0;
+    }
+
+    body.rtl a {
+        text-align: right;
+    }
+</style>
+<script>
+    const translations = {
+        zh: {
+            title: "HTTP 错误 503",
+            subtitle: "服务暂时不可用",
+            whatItMeans: "这意味着什么？",
+            description: "您的网站被暂停，服务暂时不可用。",
+            suggestions: "请尝试以下操作：",
+            actions: [
+                "打开控制面板，检查主机是否可用。",
+                "检查主机是否过期、超流量、超数据库限制，或流量和数据库是否已满。"
+            ]
+        },
+        en: {
+            title: "HTTP Error 503",
+            subtitle: "Service Temporarily Unavailable",
+            whatItMeans: "What does this mean?",
+            description: "Your website is suspended, and the service is temporarily unavailable.",
+            suggestions: "Please try the following:",
+            actions: [
+                "Open the control panel and check if the host is available.",
+                "Check if the host has expired, exceeded bandwidth or database limits, or if bandwidth and database are full."
+            ]
+        },
+        ar: {
+            title: "خطأ HTTP 503",
+            subtitle: "الخدمة غير متوفرة مؤقتًا",
+            whatItMeans: "ماذا يعني هذا؟",
+            description: "تم تعليق موقعك على الويب، والخدمة غير متوفرة مؤقتًا.",
+            suggestions: "يرجى المحاولة بما يلي:",
+            actions: [
+                "افتح لوحة التحكم وتحقق مما إذا كان المضيف متاحًا.",
+                "تحقق مما إذا كان المضيف قد انتهت صلاحيته أو تجاوز حدود النطاق الترددي أو قاعدة البيانات، أو إذا كانت قاعدة البيانات ممتلئة."
+            ]
+        },
+        pt: {
+            title: "Erro HTTP 503",
+            subtitle: "Serviço Temporariamente Indisponível",
+            whatItMeans: "O que isso significa?",
+            description: "Seu site foi suspenso, e o serviço está temporariamente indisponível.",
+            suggestions: "Por favor, tente o seguinte:",
+            actions: [
+                "Abra o painel de controle e verifique se o host está disponível.",
+                "Verifique se o host expirou, excedeu os limites de largura de banda ou banco de dados, ou se a largura de banda e o banco de dados estão cheios."
+            ]
+        }
+    };
+
+    function changeLanguage(lang) {
+        const content = translations[lang];
+        document.querySelector("h1").textContent = content.title;
+        document.querySelector("header p").textContent = content.subtitle;
+        document.querySelector(".what-it-means").textContent = content.whatItMeans;
+        document.querySelector(".description").textContent = content.description;
+        document.querySelector(".suggestions").textContent = content.suggestions;
+
+        const actionsList = document.querySelector(".actions");
+        actionsList.innerHTML = content.actions.map(action => `<li>${action}</li>`).join("");
+
+        if (lang === "ar") {
+            document.body.classList.add("rtl");
+            document.documentElement.dir = "rtl";
+        } else {
+            document.body.classList.remove("rtl");
+            document.documentElement.dir = "ltr";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => changeLanguage("zh"));
+</script>
+</head>
+<body>
+<header>
+    <h1>HTTP 错误 503</h1>
+    <p>服务暂时不可用</p>
+    <div class="language-switcher">
+        <select onchange="changeLanguage(this.value)">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+            <option value="pt">Português</option>
+        </select>
+    </div>
+</header>
+
+<div class="container">
+    <h2 class="what-it-means">这意味着什么？</h2>
+    <p class="description">您的网站被暂停，服务暂时不可用。</p>
+
+    <h2 class="suggestions">请尝试以下操作：</h2>
+    <ul class="actions"></ul>
+</div>
+</body>
+</html>

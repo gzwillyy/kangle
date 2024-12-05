@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTTP 405 错误 - 方法不被允许</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', Arial, sans-serif;
+        background: #f8f9fa;
+        color: #333;
+    }
+
+    header {
+        background-color: #17a2b8;
+        color: #fff;
+        padding: 20px 10px;
+        text-align: center;
+        position: relative;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+    }
+
+    header p {
+        margin: 5px 0 0;
+        font-size: 1rem;
+    }
+
+    .language-switcher {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .language-switcher select {
+        padding: 5px;
+        border: none;
+        border-radius: 4px;
+        background-color: #fff;
+        color: #333;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        line-height: 1.6;
+    }
+
+    h2 {
+        color: #dc3545;
+        font-size: 1.5rem;
+    }
+
+    p {
+        margin: 10px 0;
+    }
+
+    ul {
+        padding-left: 20px;
+        margin: 10px 0;
+    }
+
+    a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    footer {
+        text-align: center;
+        margin-top: 30px;
+        padding: 10px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    /* 从右到左布局 */
+    body.rtl {
+        direction: rtl;
+        text-align: right;
+    }
+
+    body.rtl ul {
+        padding-right: 20px;
+        padding-left: 0;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        header {
+            padding: 15px;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+        }
+
+        header p {
+            font-size: 0.9rem;
+        }
+
+        .language-switcher select {
+            font-size: 0.9rem;
+        }
+
+        .container {
+            padding: 20px;
+            margin: 10px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+        }
+
+        p, ul {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        header h1 {
+            font-size: 1.3rem;
+        }
+
+        header p {
+            font-size: 0.8rem;
+        }
+
+        .language-switcher {
+            top: 5px;
+            right: 5px;
+        }
+
+        .container {
+            padding: 15px;
+            margin: 5px;
+        }
+
+        h2 {
+            font-size: 1rem;
+        }
+
+        p, ul {
+            font-size: 0.8rem;
+        }
+    }
+</style>
+<script>
+    const translations = {
+        zh: {
+            title: "HTTP 错误 405",
+            subtitle: "方法不被允许",
+            whatItMeans: "这意味着什么？",
+            meaning: "对于请求所标识的资源，不允许使用请求行中所指定的方法。",
+            suggestions: "可能的解决方法：",
+            actions: [
+                "确保为所请求的资源设置了正确的 MIME 类型。",
+                "检查服务器配置文件，确保允许请求的方法（例如 GET、POST）。",
+                "如果您是网站管理员，请查看服务器日志以了解更多详情。"
+            ]
+        },
+        en: {
+            title: "HTTP Error 405",
+            subtitle: "Method Not Allowed",
+            whatItMeans: "What does this mean?",
+            meaning: "The method specified in the request line is not allowed for the resource identified by the request.",
+            suggestions: "Possible solutions:",
+            actions: [
+                "Ensure the correct MIME type is set for the requested resource.",
+                "Check server configuration to allow the requested method (e.g., GET, POST).",
+                "If you are the website administrator, check the server logs for more details."
+            ]
+        },
+        ar: {
+            title: "خطأ HTTP 405",
+            subtitle: "الطريقة غير مسموح بها",
+            whatItMeans: "ماذا يعني هذا؟",
+            meaning: "الطريقة المحددة في طلب الخط ليست مسموحًا بها للموارد المحددة في الطلب.",
+            suggestions: "الحلول الممكنة:",
+            actions: [
+                "تأكد من تعيين نوع MIME الصحيح للموارد المطلوبة.",
+                "تحقق من تكوين الخادم للسماح بالطريقة المطلوبة (مثل GET، POST).",
+                "إذا كنت مسؤول الموقع، فتحقق من سجلات الخادم للحصول على مزيد من التفاصيل."
+            ]
+        },
+        pt: {
+            title: "Erro HTTP 405",
+            subtitle: "Método Não Permitido",
+            whatItMeans: "O que isso significa?",
+            meaning: "O método especificado na linha de solicitação não é permitido para o recurso identificado pela solicitação.",
+            suggestions: "Possíveis soluções:",
+            actions: [
+                "Certifique-se de que o tipo MIME correto está definido para o recurso solicitado.",
+                "Verifique a configuração do servidor para permitir o método solicitado (por exemplo, GET, POST).",
+                "Se você é o administrador do site, verifique os logs do servidor para mais detalhes."
+            ]
+        }
+    };
+
+    function changeLanguage(lang) {
+        const content = translations[lang];
+        document.querySelector("h1").textContent = content.title;
+        document.querySelector("header p").textContent = content.subtitle;
+        document.querySelector(".what-it-means").textContent = content.whatItMeans;
+        document.querySelector(".meaning").textContent = content.meaning;
+
+        document.querySelector(".suggestions").textContent = content.suggestions;
+        const actionsList = document.querySelector(".actions");
+        actionsList.innerHTML = content.actions.map(action => `<li>${action}</li>`).join("");
+
+        if (lang === "ar") {
+            document.body.classList.add("rtl");
+            document.documentElement.dir = "rtl";
+        } else {
+            document.body.classList.remove("rtl");
+            document.documentElement.dir = "ltr";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => changeLanguage("zh"));
+</script>
+</head>
+<body>
+<header>
+    <h1>HTTP 错误 405</h1>
+    <p>方法不被允许</p>
+    <div class="language-switcher">
+        <select onchange="changeLanguage(this.value)">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+            <option value="pt">Português</option>
+        </select>
+    </div>
+</header>
+
+<div class="container">
+    <h2 class="what-it-means">这意味着什么？</h2>
+    <p class="meaning">对于请求所标识的资源，不允许使用请求行中所指定的方法。</p>
+
+    <h2 class="suggestions">可能的解决方法：</h2>
+    <ul class="actions"></ul>
+</div>
+</body>
+</html>

@@ -476,6 +476,32 @@ check_system_requirements() {
     log "系统资源检查通过。"
 }
 
+# 设置error
+setuphost()
+{
+    chmod 700 /vhs/kangle/etc /vhs/kangle/var /vhs/kangle/nodewww/data;
+    #error
+    ERROR_ZIP="error.zip"
+    ERROR_ZIP_URL="https://github.com/gzwillyy/kangle/raw/dev/ent/linux/kangle/${ERROR_ZIP}"
+    TMP_ERROR_ZIP="/tmp/$ERROR_ZIP"
+
+    log "下载 error 页面包..."
+    download_with_retry "$ERROR_ZIP_URL" "$TMP_ERROR_ZIP"
+    log "已下载 error 页面包。"
+
+    mkdir -p /vhs/kangle/error
+    log "解压 error 页面包..."
+    unzip -o "$TMP_ERROR_ZIP" -d  /vhs/kangle/error || { log "解压 error 页面包失败。"; exit 1; }
+    log "已解压 error 页面包。"
+
+    if [ -f /vhs/kangle/bin/kangle ]|[ -f /vhs/kangle/ext/php56/bin/php ]; then
+        log "success"
+    else
+        log "安装 error 失败"
+    fi;
+    rm -rf *ep*
+}
+
 # 清理函数（恢复步骤）
 cleanup() {
     log "执行清理操作..."
@@ -486,6 +512,7 @@ cleanup() {
     rm -rf /tmp/index.html
     rm -rf /tmp/dso
     rm -rf /tmp/kangle
+    rm -rf /tmp/error.zip
     rm -rf /var/log/install_kangle.log
     log "安装残留文件已清除。"
 }
@@ -516,6 +543,7 @@ main() {
     configure_firewall
     stop_disable_ip6tables
     install_kangle
+    setuphost
     configure_autostart
     update_homepage
     install_dso

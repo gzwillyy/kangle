@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTTP 414 错误 - Request-URI 太长</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', Arial, sans-serif;
+        background: #f8f9fa;
+        color: #333;
+    }
+
+    header {
+        background-color: #e83e8c;
+        color: #fff;
+        padding: 20px 10px;
+        text-align: center;
+        position: relative;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+    }
+
+    header p {
+        margin: 5px 0 0;
+        font-size: 1rem;
+    }
+
+    .language-switcher {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .language-switcher select {
+        padding: 5px;
+        border: none;
+        border-radius: 4px;
+        background-color: #fff;
+        color: #333;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        line-height: 1.6;
+    }
+
+    h2 {
+        color: #dc3545;
+        font-size: 1.5rem;
+    }
+
+    p {
+        margin: 10px 0;
+    }
+
+    ul {
+        padding-left: 20px;
+        margin: 10px 0;
+    }
+
+    a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    footer {
+        text-align: center;
+        margin-top: 30px;
+        padding: 10px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        header {
+            padding: 15px;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+        }
+
+        header p {
+            font-size: 0.9rem;
+        }
+
+        .language-switcher select {
+            font-size: 0.9rem;
+        }
+
+        .container {
+            padding: 20px;
+            margin: 10px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+        }
+
+        p, ul {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        header h1 {
+            font-size: 1.3rem;
+        }
+
+        header p {
+            font-size: 0.8rem;
+        }
+
+        .language-switcher {
+            top: 5px;
+            right: 5px;
+        }
+
+        .container {
+            padding: 15px;
+            margin: 5px;
+        }
+
+        h2 {
+            font-size: 1rem;
+        }
+
+        p, ul {
+            font-size: 0.8rem;
+        }
+    }
+
+    /* 从右到左布局 */
+    body.rtl {
+        direction: rtl;
+        text-align: right;
+    }
+
+    body.rtl ul {
+        padding-right: 20px;
+        padding-left: 0;
+    }
+
+    body.rtl a {
+        text-align: right;
+    }
+</style>
+<script>
+    const translations = {
+        zh: {
+            title: "HTTP 错误 414",
+            subtitle: "Request-URI 太长",
+            whatItMeans: "这意味着什么？",
+            meaning: [
+                "Request-URL 太长，服务器拒绝服务此请求。仅在下列条件下才可能发生：",
+                "客户机错误地将 POST 请求转换为具有较长查询信息的 GET 请求。",
+                "客户机遇到了重定向问题（例如，指向自身的重定向循环）。",
+                "服务器遭受了试图利用某些服务器漏洞的客户干扰。"
+            ],
+            suggestions: "请尝试以下操作：",
+            actions: [
+                "确认您的请求方法是否正确（例如，不应将 POST 请求错误地转换为 GET 请求）。",
+                "检查是否存在重定向循环，并修复任何配置问题。",
+                "联系服务器管理员，以确认服务器安全配置是否到位。"
+            ]
+        },
+        en: {
+            title: "HTTP Error 414",
+            subtitle: "Request-URI Too Long",
+            whatItMeans: "What does this mean?",
+            meaning: [
+                "The Request-URL is too long, and the server refuses to service the request. This can occur under the following conditions:",
+                "The client erroneously converted a POST request to a GET request with long query information.",
+                "The client encountered a redirection problem (e.g., a self-referencing redirect loop).",
+                "The server was subjected to interference from a client attempting to exploit server vulnerabilities."
+            ],
+            suggestions: "Please try the following:",
+            actions: [
+                "Verify that your request method is correct (e.g., POST requests should not be erroneously converted to GET).",
+                "Check for redirection loops and fix any configuration issues.",
+                "Contact the server administrator to ensure server security settings are in place."
+            ]
+        },
+        ar: {
+            title: "خطأ HTTP 414",
+            subtitle: "Request-URI طويل جدًا",
+            whatItMeans: "ماذا يعني هذا؟",
+            meaning: [
+                "Request-URL طويل جدًا، ويرفض الخادم تقديم الطلب. يمكن أن يحدث هذا في الحالات التالية:",
+                "قام العميل بتحويل طلب POST إلى GET مع معلومات استعلام طويلة بالخطأ.",
+                "واجه العميل مشكلة إعادة توجيه (مثل حلقة إعادة توجيه إلى نفسه).",
+                "تعرض الخادم لتدخل من عميل يحاول استغلال ثغرات الخادم."
+            ],
+            suggestions: "يرجى المحاولة بما يلي:",
+            actions: [
+                "تحقق من أن طريقة الطلب الخاصة بك صحيحة (مثل عدم تحويل طلبات POST إلى GET بالخطأ).",
+                "تحقق من وجود حلقات إعادة توجيه وقم بإصلاح أي مشكلات تكوين.",
+                "اتصل بمسؤول الخادم للتأكد من إعدادات أمان الخادم."
+            ]
+        },
+        pt: {
+            title: "Erro HTTP 414",
+            subtitle: "Request-URI Muito Longo",
+            whatItMeans: "O que isso significa?",
+            meaning: [
+                "O Request-URL é muito longo, e o servidor se recusa a atender a solicitação. Isso pode ocorrer nas seguintes condições:",
+                "O cliente erroneamente converteu uma solicitação POST para uma solicitação GET com informações de consulta longas.",
+                "O cliente encontrou um problema de redirecionamento (por exemplo, um loop de redirecionamento para si mesmo).",
+                "O servidor foi submetido a interferência de um cliente tentando explorar vulnerabilidades do servidor."
+            ],
+            suggestions: "Por favor, tente o seguinte:",
+            actions: [
+                "Verifique se o método de solicitação está correto (por exemplo, as solicitações POST não devem ser convertidas incorretamente para GET).",
+                "Verifique se há loops de redirecionamento e corrija quaisquer problemas de configuração.",
+                "Entre em contato com o administrador do servidor para garantir que as configurações de segurança do servidor estejam corretas."
+            ]
+        }
+    };
+
+    function changeLanguage(lang) {
+        const content = translations[lang];
+        document.querySelector("h1").textContent = content.title;
+        document.querySelector("header p").textContent = content.subtitle;
+        document.querySelector(".what-it-means").textContent = content.whatItMeans;
+
+        const meaningList = document.querySelector(".meaning");
+        meaningList.innerHTML = content.meaning.map(meaning => `<p>${meaning}</p>`).join("");
+
+        document.querySelector(".suggestions").textContent = content.suggestions;
+        const actionsList = document.querySelector(".actions");
+        actionsList.innerHTML = content.actions.map(action => `<li>${action}</li>`).join("");
+
+        if (lang === "ar") {
+            document.body.classList.add("rtl");
+            document.documentElement.dir = "rtl";
+        } else {
+            document.body.classList.remove("rtl");
+            document.documentElement.dir = "ltr";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => changeLanguage("zh"));
+</script>
+</head>
+<body>
+<header>
+    <h1>HTTP 错误 414</h1>
+    <p>Request-URI 太长</p>
+    <div class="language-switcher">
+        <select onchange="changeLanguage(this.value)">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+            <option value="pt">Português</option>
+        </select>
+    </div>
+</header>
+
+<div class="container">
+    <h2 class="what-it-means">这意味着什么？</h2>
+    <div class="meaning">
+        <p>Request-URL 太长，服务器拒绝服务此请求。仅在下列条件下才可能发生：</p>
+    </div>
+
+    <h2 class="suggestions">请尝试以下操作：</h2>
+    <ul class="actions"></ul>
+</div>
+</body>
+</html>

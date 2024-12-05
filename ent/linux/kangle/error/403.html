@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTTP 403 错误 - 访问被拒绝</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', Arial, sans-serif;
+        background: #f8f9fa;
+        color: #333;
+    }
+
+    header {
+        background-color: #ffc107;
+        color: #fff;
+        padding: 20px 10px;
+        text-align: center;
+        position: relative;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+    }
+
+    header p {
+        margin: 5px 0 0;
+        font-size: 1rem;
+    }
+
+    .language-switcher {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .language-switcher select {
+        padding: 5px;
+        border: none;
+        border-radius: 4px;
+        background-color: #fff;
+        color: #333;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        line-height: 1.6;
+    }
+
+    h2 {
+        color: #dc3545;
+        font-size: 1.5rem;
+    }
+
+    p {
+        margin: 10px 0;
+    }
+
+    ul {
+        padding-left: 20px;
+        margin: 10px 0;
+    }
+
+    a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    footer {
+        text-align: center;
+        margin-top: 30px;
+        padding: 10px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    /* 从右到左布局 */
+    body.rtl {
+        direction: rtl;
+        text-align: right;
+    }
+
+    body.rtl ul {
+        padding-right: 20px;
+        padding-left: 0;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        header {
+            padding: 15px;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+        }
+
+        header p {
+            font-size: 0.9rem;
+        }
+
+        .language-switcher select {
+            font-size: 0.9rem;
+        }
+
+        .container {
+            padding: 20px;
+            margin: 10px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+        }
+
+        p, ul {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        header h1 {
+            font-size: 1.3rem;
+        }
+
+        header p {
+            font-size: 0.8rem;
+        }
+
+        .language-switcher {
+            top: 5px;
+            right: 5px;
+        }
+
+        .container {
+            padding: 15px;
+            margin: 5px;
+        }
+
+        h2 {
+            font-size: 1rem;
+        }
+
+        p, ul {
+            font-size: 0.8rem;
+        }
+    }
+</style>
+<script>
+    const translations = {
+        zh: {
+            title: "HTTP 错误 403",
+            subtitle: "对不起，您的网站出错了。",
+            whatItMeans: "这意味着什么？",
+            meaning: "HTTP 错误 403：访问被拒绝，服务器禁止访问所请求的资源。",
+            youCan: "您可以：",
+            solutions: [
+                "检查是否有默认文档。",
+                "检查是否上传了所有文件。",
+                "检查此目录是否只读不可写入。",
+                "检查此目录是否不能运行执行程序的权限，例如不能运行 PHP 文件的目录。"
+            ]
+        },
+        en: {
+            title: "HTTP Error 403",
+            subtitle: "Sorry, there is an error on your site.",
+            whatItMeans: "What does this mean?",
+            meaning: "HTTP Error 403: Access denied. The server prohibits access to the requested resource.",
+            youCan: "You can:",
+            solutions: [
+                "Check if there is a default document.",
+                "Check if all files have been uploaded.",
+                "Ensure the directory is not read-only.",
+                "Ensure the directory has permissions to execute programs (e.g., PHP files)."
+            ]
+        },
+        ar: {
+            title: "خطأ HTTP 403",
+            subtitle: "عذرًا، هناك خطأ في موقعك.",
+            whatItMeans: "ماذا يعني هذا؟",
+            meaning: "خطأ HTTP 403: تم رفض الوصول. يمنع الخادم الوصول إلى المورد المطلوب.",
+            youCan: "يمكنك:",
+            solutions: [
+                "تحقق مما إذا كان هناك مستند افتراضي.",
+                "تحقق مما إذا تم تحميل جميع الملفات.",
+                "تأكد من أن الدليل ليس للقراءة فقط.",
+                "تأكد من أن الدليل يحتوي على أذونات لتشغيل البرامج (مثل ملفات PHP)."
+            ]
+        },
+        pt: {
+            title: "Erro HTTP 403",
+            subtitle: "Desculpe, há um erro no seu site.",
+            whatItMeans: "O que isso significa?",
+            meaning: "Erro HTTP 403: Acesso negado. O servidor proíbe o acesso ao recurso solicitado.",
+            youCan: "Você pode:",
+            solutions: [
+                "Verificar se existe um documento padrão.",
+                "Verificar se todos os arquivos foram enviados.",
+                "Garantir que o diretório não seja somente leitura.",
+                "Garantir que o diretório tenha permissões para executar programas (exemplo: arquivos PHP)."
+            ]
+        }
+    };
+
+    function changeLanguage(lang) {
+        const content = translations[lang];
+        document.querySelector("h1").textContent = content.title;
+        document.querySelector("header p").textContent = content.subtitle;
+        document.querySelector(".what-it-means").textContent = content.whatItMeans;
+        document.querySelector(".meaning").textContent = content.meaning;
+
+        document.querySelector(".you-can").textContent = content.youCan;
+        const solutionsList = document.querySelector(".solutions");
+        solutionsList.innerHTML = content.solutions.map(solution => `<li>${solution}</li>`).join("");
+
+        if (lang === "ar") {
+            document.body.classList.add("rtl");
+            document.documentElement.dir = "rtl";
+        } else {
+            document.body.classList.remove("rtl");
+            document.documentElement.dir = "ltr";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => changeLanguage("zh"));
+</script>
+</head>
+<body>
+<header>
+    <h1>HTTP 错误 403</h1>
+    <p>对不起，您的网站出错了。</p>
+    <div class="language-switcher">
+        <select onchange="changeLanguage(this.value)">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+            <option value="pt">Português</option>
+        </select>
+    </div>
+</header>
+
+<div class="container">
+    <h2 class="what-it-means">这意味着什么？</h2>
+    <p class="meaning">HTTP 错误 403：访问被拒绝，服务器禁止访问所请求的资源。</p>
+
+    <h2 class="you-can">您可以：</h2>
+    <ul class="solutions"></ul>
+</div>
+</body>
+</html>

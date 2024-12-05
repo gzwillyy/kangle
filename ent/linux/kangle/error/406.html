@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTTP 406 错误 - 不可接受</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', Arial, sans-serif;
+        background: #f8f9fa;
+        color: #333;
+    }
+
+    header {
+        background-color: #28a745;
+        color: #fff;
+        padding: 20px 10px;
+        text-align: center;
+        position: relative;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+    }
+
+    header p {
+        margin: 5px 0 0;
+        font-size: 1rem;
+    }
+
+    .language-switcher {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .language-switcher select {
+        padding: 5px;
+        border: none;
+        border-radius: 4px;
+        background-color: #fff;
+        color: #333;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        line-height: 1.6;
+    }
+
+    h2 {
+        color: #dc3545;
+        font-size: 1.5rem;
+    }
+
+    p {
+        margin: 10px 0;
+    }
+
+    ul {
+        padding-left: 20px;
+        margin: 10px 0;
+    }
+
+    a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    footer {
+        text-align: center;
+        margin-top: 30px;
+        padding: 10px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    /* 从右到左布局 */
+    body.rtl {
+        direction: rtl;
+        text-align: right;
+    }
+
+    body.rtl ul {
+        padding-right: 20px;
+        padding-left: 0;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        header {
+            padding: 15px;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+        }
+
+        header p {
+            font-size: 0.9rem;
+        }
+
+        .language-switcher select {
+            font-size: 0.9rem;
+        }
+
+        .container {
+            padding: 20px;
+            margin: 10px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+        }
+
+        p, ul {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        header h1 {
+            font-size: 1.3rem;
+        }
+
+        header p {
+            font-size: 0.8rem;
+        }
+
+        .language-switcher {
+            top: 5px;
+            right: 5px;
+        }
+
+        .container {
+            padding: 15px;
+            margin: 5px;
+        }
+
+        h2 {
+            font-size: 1rem;
+        }
+
+        p, ul {
+            font-size: 0.8rem;
+        }
+    }
+</style>
+<script>
+    const translations = {
+        zh: {
+            title: "HTTP 错误 406",
+            subtitle: "不可接受",
+            whatItMeans: "这意味着什么？",
+            meaning: "根据此请求中所发送的 \"接受\" 标头，此请求所标识的资源只能生成内容特征为 \"不可接受\" 的响应实体。",
+            suggestions: "可能的解决方法：",
+            actions: [
+                "检查请求的 \"接受\" 标头是否正确，并确保它支持服务器返回的内容类型。",
+                "联系网站管理员以确认服务器是否支持您请求的内容类型。",
+                "修改客户端的请求标头，确保其支持服务器提供的响应格式。"
+            ]
+        },
+        en: {
+            title: "HTTP Error 406",
+            subtitle: "Not Acceptable",
+            whatItMeans: "What does this mean?",
+            meaning: "The requested resource cannot generate a response that is acceptable according to the 'Accept' headers sent in the request.",
+            suggestions: "Possible solutions:",
+            actions: [
+                "Check if the 'Accept' header in your request is correct and supports the content type returned by the server.",
+                "Contact the website administrator to confirm if the server supports the requested content type.",
+                "Modify your client's request headers to ensure they support the format provided by the server."
+            ]
+        },
+        ar: {
+            title: "خطأ HTTP 406",
+            subtitle: "غير مقبول",
+            whatItMeans: "ماذا يعني هذا؟",
+            meaning: "المورد المطلوب لا يمكنه إنشاء استجابة مقبولة وفقًا لعناوين 'Accept' المرسلة في الطلب.",
+            suggestions: "الحلول الممكنة:",
+            actions: [
+                "تحقق مما إذا كان رأس 'Accept' في طلبك صحيحًا ويدعم نوع المحتوى الذي يتم إرجاعه بواسطة الخادم.",
+                "اتصل بمسؤول الموقع للتأكد مما إذا كان الخادم يدعم نوع المحتوى المطلوب.",
+                "قم بتعديل عناوين طلب العميل للتأكد من أنها تدعم التنسيق الذي يوفره الخادم."
+            ]
+        },
+        pt: {
+            title: "Erro HTTP 406",
+            subtitle: "Não Aceitável",
+            whatItMeans: "O que isso significa?",
+            meaning: "O recurso solicitado não pode gerar uma resposta aceitável de acordo com os cabeçalhos 'Accept' enviados na solicitação.",
+            suggestions: "Possíveis soluções:",
+            actions: [
+                "Verifique se o cabeçalho 'Accept' em sua solicitação está correto e suporta o tipo de conteúdo retornado pelo servidor.",
+                "Entre em contato com o administrador do site para confirmar se o servidor suporta o tipo de conteúdo solicitado.",
+                "Modifique os cabeçalhos da solicitação do cliente para garantir que eles suportem o formato fornecido pelo servidor."
+            ]
+        }
+    };
+
+    function changeLanguage(lang) {
+        const content = translations[lang];
+        document.querySelector("h1").textContent = content.title;
+        document.querySelector("header p").textContent = content.subtitle;
+        document.querySelector(".what-it-means").textContent = content.whatItMeans;
+        document.querySelector(".meaning").textContent = content.meaning;
+
+        document.querySelector(".suggestions").textContent = content.suggestions;
+        const actionsList = document.querySelector(".actions");
+        actionsList.innerHTML = content.actions.map(action => `<li>${action}</li>`).join("");
+
+        if (lang === "ar") {
+            document.body.classList.add("rtl");
+            document.documentElement.dir = "rtl";
+        } else {
+            document.body.classList.remove("rtl");
+            document.documentElement.dir = "ltr";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => changeLanguage("zh"));
+</script>
+</head>
+<body>
+<header>
+    <h1>HTTP 错误 406</h1>
+    <p>不可接受</p>
+    <div class="language-switcher">
+        <select onchange="changeLanguage(this.value)">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+            <option value="pt">Português</option>
+        </select>
+    </div>
+</header>
+
+<div class="container">
+    <h2 class="what-it-means">这意味着什么？</h2>
+    <p class="meaning">根据此请求中所发送的 "接受" 标头，此请求所标识的资源只能生成内容特征为 "不可接受" 的响应实体。</p>
+
+    <h2 class="suggestions">可能的解决方法：</h2>
+    <ul class="actions"></ul>
+</div>
+</body>
+</html>

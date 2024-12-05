@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTTP 401 错误 - 未经授权</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', Arial, sans-serif;
+        background: #f8f9fa;
+        color: #333;
+    }
+
+    header {
+        background-color: #dc3545;
+        color: #fff;
+        padding: 20px 10px;
+        text-align: center;
+        position: relative;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+    }
+
+    header p {
+        margin: 5px 0 0;
+        font-size: 1rem;
+    }
+
+    .language-switcher {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .language-switcher select {
+        padding: 5px;
+        border: none;
+        border-radius: 4px;
+        background-color: #fff;
+        color: #333;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        line-height: 1.6;
+    }
+
+    h2 {
+        color: #dc3545;
+        font-size: 1.5rem;
+    }
+
+    p {
+        margin: 10px 0;
+    }
+
+    ul {
+        padding-left: 20px;
+        margin: 10px 0;
+    }
+
+    a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    .cta {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .cta a {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: background-color 0.3s;
+    }
+
+    .cta a:hover {
+        background-color: #0056b3;
+    }
+
+    footer {
+        text-align: center;
+        margin-top: 30px;
+        padding: 10px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    /* 从右到左布局 */
+    body.rtl {
+        direction: rtl;
+        text-align: right;
+    }
+
+    body.rtl ul {
+        padding-right: 20px;
+        padding-left: 0;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        header {
+            padding: 15px;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+        }
+
+        header p {
+            font-size: 0.9rem;
+        }
+
+        .language-switcher select {
+            font-size: 0.9rem;
+        }
+
+        .container {
+            padding: 20px;
+            margin: 10px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+        }
+
+        p, ul {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        header h1 {
+            font-size: 1.3rem;
+        }
+
+        header p {
+            font-size: 0.8rem;
+        }
+
+        .language-switcher {
+            top: 5px;
+            right: 5px;
+        }
+
+        .container {
+            padding: 15px;
+            margin: 5px;
+        }
+
+        h2 {
+            font-size: 1rem;
+        }
+
+        p, ul {
+            font-size: 0.8rem;
+        }
+    }
+</style>
+<script>
+    const translations = {
+        zh: {
+            title: "HTTP 错误 401",
+            subtitle: "未经授权的操作",
+            whatItMeans: "这意味着什么？",
+            meaning: "HTTP 错误 401：未经授权，访问由于凭据无效被拒绝。",
+            reasons: [
+                "可能未启用目录授权访问。",
+                "提供的凭据可能无效或过期。"
+            ],
+            howToFix: "如何解决？",
+            fixes: [
+                "检查并提供有效的凭据。",
+                "确认目录是否已启用授权访问。",
+                "重新尝试登录或访问。"
+            ]
+        },
+        en: {
+            title: "HTTP Error 401",
+            subtitle: "Unauthorized Action",
+            whatItMeans: "What does this mean?",
+            meaning: "HTTP Error 401: Unauthorized. Access is denied due to invalid credentials.",
+            reasons: [
+                "The directory may not be enabled for authorized access.",
+                "The provided credentials might be invalid or expired."
+            ],
+            howToFix: "How to fix it?",
+            fixes: [
+                "Check and provide valid credentials.",
+                "Ensure the directory is enabled for authorized access.",
+                "Retry logging in or accessing."
+            ]
+        },
+        ar: {
+            title: "خطأ HTTP 401",
+            subtitle: "عملية غير مصرح بها",
+            whatItMeans: "ماذا يعني هذا؟",
+            meaning: "خطأ HTTP 401: غير مصرح به. تم رفض الوصول بسبب بيانات اعتماد غير صالحة.",
+            reasons: [
+                "قد لا يكون الدليل ممكّنًا للوصول المصرح به.",
+                "قد تكون بيانات الاعتماد المقدمة غير صالحة أو منتهية الصلاحية."
+            ],
+            howToFix: "كيف يمكن إصلاح ذلك؟",
+            fixes: [
+                "تحقق وقدم بيانات اعتماد صالحة.",
+                "تأكد من تمكين الدليل للوصول المصرح به.",
+                "حاول تسجيل الدخول أو الوصول مرة أخرى."
+            ]
+        },
+        pt: {
+            title: "Erro HTTP 401",
+            subtitle: "Ação não autorizada",
+            whatItMeans: "O que isso significa?",
+            meaning: "Erro HTTP 401: Não autorizado. O acesso foi negado devido a credenciais inválidas.",
+            reasons: [
+                "O diretório pode não estar habilitado para acesso autorizado.",
+                "As credenciais fornecidas podem ser inválidas ou expiradas."
+            ],
+            howToFix: "Como corrigir?",
+            fixes: [
+                "Verifique e forneça credenciais válidas.",
+                "Certifique-se de que o diretório está habilitado para acesso autorizado.",
+                "Tente fazer login ou acessar novamente."
+            ]
+        }
+    };
+
+    function changeLanguage(lang) {
+        const content = translations[lang];
+        document.querySelector("h1").textContent = content.title;
+        document.querySelector("header p").textContent = content.subtitle;
+        document.querySelector(".what-it-means").textContent = content.whatItMeans;
+        document.querySelector(".meaning").textContent = content.meaning;
+
+        const reasonsList = document.querySelector(".reasons");
+        reasonsList.innerHTML = content.reasons.map(reason => `<li>${reason}</li>`).join("");
+
+        document.querySelector(".how-to-fix").textContent = content.howToFix;
+        const fixesList = document.querySelector(".fixes");
+        fixesList.innerHTML = content.fixes.map(fix => `<li>${fix}</li>`).join("");
+
+        if (lang === "ar") {
+            document.body.classList.add("rtl");
+            document.documentElement.dir = "rtl";
+        } else {
+            document.body.classList.remove("rtl");
+            document.documentElement.dir = "ltr";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => changeLanguage("zh"));
+</script>
+</head>
+<body>
+<header>
+    <h1>HTTP 错误 401</h1>
+    <p>未经授权的操作</p>
+    <div class="language-switcher">
+        <select onchange="changeLanguage(this.value)">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+            <option value="pt">Português</option>
+        </select>
+    </div>
+</header>
+
+<div class="container">
+    <h2 class="what-it-means">这意味着什么？</h2>
+    <p class="meaning">HTTP 错误 401：未经授权，访问由于凭据无效被拒绝。</p>
+    <ul class="reasons"></ul>
+
+    <h2 class="how-to-fix">如何解决？</h2>
+    <ul class="fixes"></ul>
+</div>
+</body>
+</html>
