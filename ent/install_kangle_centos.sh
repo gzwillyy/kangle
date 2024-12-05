@@ -477,8 +477,7 @@ check_system_requirements() {
 }
 
 # 设置error
-setuphost()
-{
+setuphost() {
     chmod 700 /vhs/kangle/etc /vhs/kangle/var /vhs/kangle/nodewww/data;
     #error
     ERROR_ZIP="error.zip"
@@ -543,10 +542,10 @@ main() {
     configure_firewall
     stop_disable_ip6tables
     install_kangle
-    setuphost
     configure_autostart
     update_homepage
     install_dso
+    setuphost
     finish_installation
 }
 
