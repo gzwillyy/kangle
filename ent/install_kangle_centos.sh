@@ -370,6 +370,11 @@ install_kangle() {
     log "启动 Kangle..."
     "$PREFIX/bin/kangle"
 
+    # 删除安装压缩包
+    log "删除 Kangle 安装压缩包..."
+    rm -f "$KANGLE_TAR"
+    log "Kangle 安装压缩包已删除。"
+
     # 返回原始目录
     cd "$BASE_DIR" || exit
 }
