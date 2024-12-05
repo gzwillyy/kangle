@@ -312,7 +312,7 @@ install_kangle() {
     BASE_DIR=$(pwd)
 
     # 构造 Kangle 安装包文件名
-    KANGLE_TAR="kangle-ent-${KANGLE_VERSION}${ARCH}.tar.gz"
+    KANGLE_TAR="/tmp/kangle-ent-${KANGLE_VERSION}${ARCH}.tar.gz"
     KANGLE_URL="https://github.com/gzwillyy/kangle/raw/dev/ent/${KANGLE_TAR}"
     KANGLE_CHECKSUM="your_expected_sha256_checksum_here"  # 替换为实际校验和
 
@@ -323,9 +323,9 @@ install_kangle() {
     log "已下载 Kangle 安装包。"
 
     log "解压 Kangle 安装包..."
-    tar xzf "$KANGLE_TAR" || { log "解压 Kangle 安装包失败。"; exit 1; }
+    tar xzf "$KANGLE_TAR"  -C /tmp/kangle || { log "解压 Kangle 安装包失败。"; exit 1; }
 
-    cd kangle || { log "进入 kangle 目录失败。"; exit 1; }
+    cd /tmp/kangle || { log "进入 kangle 目录失败。"; exit 1; }
 
     log "停止已有的 Kangle 实例（如果有）..."
     if [ -x "$PREFIX/bin/kangle" ]; then
@@ -507,6 +507,20 @@ check_system_requirements() {
     log "系统资源检查通过。"
 }
 
+# 清理函数（恢复步骤）
+cleanup() {
+    log "执行清理操作..."
+    # 删除残留文件和目录
+    log "删除安装残留文件..."
+    rm -rf /tmp/kangle-ent-*.tar.gz
+    rm -rf /tmp/kangle-dso-*.zip
+    rm -rf /tmp/index.html
+    rm -rf /tmp/dso
+    log "安装残留文件已清除。"
+}
+
+# 捕获退出信号
+trap cleanup EXIT
 
 # =============================================================================
 # 主脚本流程
