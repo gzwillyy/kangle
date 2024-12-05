@@ -11,7 +11,7 @@ CPU：单核
 
 ```
 bash <(curl -sSL https://linuxmirrors.cn/main.sh)
-yum -y install wget;wget https://github.com/gzwillyy/kangle/raw/dev/ent/install_kangle_centos.sh -O e.sh;sh e.sh /vhs/kangle
+yum -y install wget && wget -qO- https://github.com/gzwillyy/kangle/raw/dev/ent/install_kangle_centos.sh | sh -s /vhs/kangle
 ```
 
 默认登录密码是什么?
