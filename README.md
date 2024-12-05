@@ -10,7 +10,7 @@ CPU：单核
 安装时间：普通VPS大约在2-5分钟左右
 
 ```
-bash <(curl -sSL https://linuxmirrors.cn/main.sh) --abroad
+bash <(curl -sSL https://linuxmirrors.cn/main.sh)
 yum -y install wget;wget https://github.com/gzwillyy/kangle/raw/dev/ent/install_kangle_centos.sh -O e.sh;sh e.sh /vhs/kangle
 ```
 
