@@ -312,12 +312,12 @@ install_kangle() {
     BASE_DIR=$(pwd)
 
     # 构造 Kangle 安装包文件名
-    KANGLE_TAR="/tmp/kangle-ent-${KANGLE_VERSION}${ARCH}.tar.gz"
+    KANGLE_TAR="kangle-ent-${KANGLE_VERSION}${ARCH}.tar.gz"
     KANGLE_URL="https://github.com/gzwillyy/kangle/raw/dev/ent/${KANGLE_TAR}"
     KANGLE_CHECKSUM="your_expected_sha256_checksum_here"  # 替换为实际校验和
 
     log "下载 Kangle 安装包..."
-    download_with_retry "$KANGLE_URL" "$KANGLE_TAR"
+    download_with_retry "$KANGLE_URL" "/tmp/$KANGLE_TAR"
     # 如果有校验和，启用以下行
     # verify_checksum "$KANGLE_TAR" "$KANGLE_CHECKSUM" || { log "Kangle 安装包校验失败。"; exit 1; }
     log "已下载 Kangle 安装包。"
