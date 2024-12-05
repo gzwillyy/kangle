@@ -523,6 +523,7 @@ cleanup() {
     rm -rf /tmp/index.html
     rm -rf /tmp/dso
     rm -rf /tmp/kangle
+    rm -rf /var/log/install_kangle.log
     log "安装残留文件已清除。"
 }
 
