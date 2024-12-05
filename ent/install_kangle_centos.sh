@@ -376,33 +376,12 @@ install_kangle() {
 configure_autostart() {
     log "配置开机自启..."
 
-    if [[ "$CENTOS_VERSION" -eq 6 ]]; then
-        # 对于 CentOS 6，使用 rc.local
-        if ! grep -Fxq "$PREFIX/bin/kangle" /etc/rc.d/rc.local; then
-            echo "$PREFIX/bin/kangle" >> /etc/rc.d/rc.local
-            chmod +x /etc/rc.d/rc.local
-            log "已将 Kangle 添加到 /etc/rc.d/rc.local 以实现开机自启。"
-        else
-            log "Kangle 已在 /etc/rc.d/rc.local 中配置。"
-        fi
-    elif [[ "$CENTOS_VERSION" -ge 7 ]]; then
-        # 对于 CentOS 7-8 / Stream 8，使用 systemd
-        KANGLE_SERVICE_FILE="/etc/systemd/system/kangle.service"
-
-        log "创建或更新 systemd 服务文件 kangle.service..."
-        cat > "$KANGLE_SERVICE_FILE" <<EOL
-[Unit]
-Description=Kangle Web Server
-After=network.target
-
-[Service]
-ExecStart=$PREFIX/bin/kangle
-
-[Install]
-WantedBy=multi-user.target
-EOL
-        systemctl enable kangle
-        log "已创建并启用 systemd 服务文件 kangle.service。"
+    if ! grep -Fxq "$PREFIX/bin/kangle" /etc/rc.d/rc.local; then
+        echo "$PREFIX/bin/kangle" >> /etc/rc.d/rc.local
+        chmod +x /etc/rc.d/rc.local
+        log "已将 Kangle 添加到 /etc/rc.d/rc.local 以实现开机自启。"
+    else
+        log "Kangle 已在 /etc/rc.d/rc.local 中配置。"
     fi
 }
 
