@@ -373,6 +373,7 @@ install_kangle() {
     cd "$BASE_DIR" || exit
 }
 
+# 开机自启
 configure_autostart() {
     log "配置开机自启..."
 
@@ -476,9 +477,9 @@ check_system_requirements() {
     log "系统资源检查通过。"
 }
 
-# 设置error
+# 设置error页面
 setuphost() {
-    #error
+    # 定义错误页面包及下载地址
     ERROR_ZIP="error.zip"
     ERROR_ZIP_URL="https://github.com/gzwillyy/kangle/raw/dev/ent/linux/kangle/${ERROR_ZIP}"
     TMP_ERROR_ZIP="/tmp/$ERROR_ZIP"
@@ -487,17 +488,30 @@ setuphost() {
     download_with_retry "$ERROR_ZIP_URL" "$TMP_ERROR_ZIP"
     log "已下载 error 页面包。"
 
-    mkdir -p /vhs/kangle/error
-    log "解压 error 页面包..."
-    unzip -o "$TMP_ERROR_ZIP" -d  /vhs/kangle/error || { log "解压 error 页面包失败。"; exit 1; }
-    log "已解压 error 页面包。"
+    # 创建目标目录
+    TARGET_DIR="/vhs/kangle/error"
+    mkdir -p "$TARGET_DIR"
 
-    if [ -f /vhs/kangle/bin/kangle ]|[ -f /vhs/kangle/ext/php56/bin/php ]; then
-        log "success"
+    log "解压 error 页面包..."
+    unzip -o "$TMP_ERROR_ZIP" -d "$TARGET_DIR" || { log "解压 error 页面包失败。"; exit 1; }
+    log "已解压 error 页面包到 $TARGET_DIR。"
+}
+
+# 禁止3311 web管理
+create_manage_sec() {
+    local kangle_dir="/vhs/kangle"
+    local manage_sec_file="$kangle_dir/manage.sec"
+
+    log "检查 $manage_sec_file 文件是否存在..."
+
+    # 如果文件不存在，则创建它
+    if [ ! -f "$manage_sec_file" ]; then
+        log "文件 $manage_sec_file 不存在，正在创建..."
+        touch "$manage_sec_file" || { log "创建 $manage_sec_file 文件失败。"; exit 1; }
+        log "已成功创建 $manage_sec_file 文件。"
     else
-        log "安装 error 失败"
-    fi;
-    rm -rf *ep*
+        log "文件 $manage_sec_file 已存在，跳过创建步骤。"
+    fi
 }
 
 # 清理函数（恢复步骤）
@@ -523,28 +537,50 @@ trap cleanup EXIT
 # =============================================================================
 
 main() {
+    # 检查是否以 root 用户运行
     check_root
+    # 检查输入参数
     check_arguments "$@"
+    # 初始化日志文件
     initialize_log
 
+    # 检测操作系统类型和版本
     detect_os
+    # 确定 CentOS 版本
     determine_version
+    # 确定包管理器
     determine_pkg_manager
+    # 设置 ARCH 变量
     set_arch
 
+    # 检查系统资源
     check_system_requirements
 
+    # 检测并卸载 firewalld
     uninstall_firewalld
+    # 停止并禁用 httpd 和 nginx 服务
     stop_disable_services
+    # 更新系统包
     update_system
+    # 检查并安装依赖项
     install_dependencies
+    # 使用 iptables 配置防火墙
     configure_firewall
+    # 停用 ip6tables
     stop_disable_ip6tables
+    # 安装 Kangle
     install_kangle
+    # 配置开机自启
     configure_autostart
+    # 更新 Kangle 首页
     update_homepage
+    # 安装 DSO
     install_dso
+    # 设置error页面
     setuphost
+    # 禁止3311 web管理
+    create_manage_sec
+    # 清除残留
     finish_installation
 }
 
