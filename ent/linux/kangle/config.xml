@@ -85,7 +85,7 @@
 				<mark_flag  no_cache='1' ></mark_flag>
 			</chain>
 			<chain  action='continue' >
-                <acl_ip_rate request='0' second='1'></acl_ip_rate>
+                <acl_ip_rate request='0' second='20'></acl_ip_rate>
                 <mark_flow  flow='0' cache='0' ></mark_flow>
             </chain>
 		</table>
