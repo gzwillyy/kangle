@@ -412,6 +412,29 @@ update_homepage() {
     fi
 }
 
+# 更新 Kangle 配置文件
+update_configxml() {
+    log "更新 Kangle 配置..."
+
+    CONFIG_XML_URL="https://github.com/gzwillyy/kangle/raw/dev/ent/linux/kangle/config.html"
+    TMP_CONFIG_XML="/tmp/config.html"
+
+    log "下载配置文件..."
+    download_with_retry "$CONFIG_XML_URL" "$TMP_CONFIG_XML"
+
+    # 仅当内容不同才替换
+    if [ ! -f "$PREFIX/etc/config.xml" ] || ! cmp -s "$TMP_CONFIG_XML" "$PREFIX/etc/config.xml"; then
+        mv "$TMP_CONFIG_XML" "$PREFIX/etc/config.xml" || { log "替换配置文件失败。"; exit 1; }
+        log "配置已更新。"
+        # 重启 Kangle 以应用更改
+        log "重启 Kangle 以应用更改..."
+        "$PREFIX/bin/kangle" -q
+        "$PREFIX/bin/kangle" -z /var/cache/kangle
+    else
+        log "配置未更改，跳过更新。"
+    fi
+}
+
 # 安装 DSO
 install_dso() {
     log "安装 DSO..."
@@ -574,6 +597,8 @@ main() {
     configure_autostart
     # 更新 Kangle 首页
     update_homepage
+    # 更新 Kangle 配置
+    update_configxml
     # 安装 DSO
     install_dso
     # 设置error页面
