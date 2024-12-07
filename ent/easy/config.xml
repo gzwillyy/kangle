@@ -46,6 +46,8 @@
 	<!--access start-->
 	<request action='vhs' >
 		<table name='!cdn_table'>
+			<chain  action='continue' >
+			</chain>
 		</table>
 		<table name='BEGIN'>
 			<chain  action='deny' >
