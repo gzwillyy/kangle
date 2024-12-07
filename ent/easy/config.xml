@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<!--listen start-->
+	<listen ip='*' port='80' type='http' />
+	<listen ip='*' port='3311' type='manage' />
+	<!--listen end-->
+	<lang>zh_CN</lang>
+	<keep_alive_count>2000</keep_alive_count>
+	<timeout>60</timeout>
+	<connect_timeout>10</connect_timeout>
+	<min_free_thread>0</min_free_thread>
+	<process_cpu_usage>0</process_cpu_usage>
+	<admin user='admin' password='kangle' crypt='plain' auth_type='Basic' admin_ips='127.0.0.1|*'/>
+	<compress only_compress_cache='0' min_compress_length='256' gzip_level = '5' br_level='5'/>
+	<cache default='1' max_cache_size='1M' memory='50M' max_bigobj_size='2G' disk='5G' disk_dir='/var/cache/kangle' refresh_time='31536000'/>
+	<connect max_per_ip='0' max='0' >
+	</connect>
+	<max_post_size>100M</max_post_size>
+	<attack wl_time='1800' cc_key='__CBK'/>
+	<bl_time>1800</bl_time>
+	<unix_socket>1</unix_socket>
+	<path_info>1</path_info>
+	<log_handle_concurrent>2</log_handle_concurrent>
+	<log level='3' rotate_time='0 0 * * *' rotate_size='100M' error_rotate_size='100M' logs_day='7' logs_size='2G' log_handle='1'/>
+	<auth_delay>5</auth_delay>
+	<server_software>kangle/3.5</server_software>
+	<hostname>kangle web server</hostname>
+	<worker_io>16</worker_io>
+	<max_io>0</max_io>
+	<io_timeout>4</io_timeout>
+	<worker_dns>32</worker_dns>
+	<!--server start-->
+	<server name='' proto='http' ip_hash='0' url_hash='0' cookie_stick='0' error_try_time='30' max_error_count='5' >
+	</server>
+	<!--server end-->
+	<!--api start-->
+	<api name='whm' file='buildin:whm'  life_time='60' max_error_count='5'>
+	</api>
+	<!--api end-->
+	<!--cmd start-->
+	<!--cmd end-->
+	<!--writeback start-->
+	<!--writeback end-->
+	<!--access start-->
+	<request action='vhs' >
+		<table name='BEGIN'>
+			<chain  action='deny' >
+				<mark_check_black_list  > </mark_check_black_list>
+			</chain>
+			<chain  action='continue' >
+				<acl_self_port >443</acl_self_port>
+				<mark_add_header   attr='X-Client-Scheme' val='https' force='0'></mark_add_header>
+			</chain>
+			<chain  action='continue' >
+				<mark_flag  always_online='1' x_cache='1' x_real_ip='1' age='1' ></mark_flag>
+			</chain>
+			<chain  action='continue' >
+				<acl_path  path='/KANGLE_CCIMG.php'></acl_path>
+				<mark_anti_session  ></mark_anti_session>
+				<mark_host   host='127.0.0.1' port='3319' proxy='1' life_time='0'></mark_host>
+			</chain>
+		</table>
+	</request>
+	<response action='allow' >
+		<table name='BEGIN'>
+			<chain  action='continue' >
+				<acl_file_ext  icase='1' split='|'>3gp|avi|bdmv|bmp|css|f4v|flv|gif|ico|img|jpeg|jpg|js|log|map|mkv|mp3|mp4|png|swf|wolf|wolf2|webp</acl_file_ext>
+				<acl_status_code op='lt' code='400'></acl_status_code>
+				<mark_cache_control   max_age='31536000'></mark_cache_control>
+			</chain>
+			<chain  action='continue' >
+				<acl_status_code op='gt' code='399'></acl_status_code>
+				<mark_response_flag   flagvalue='nocache,nodiskcache,'></mark_response_flag>
+			</chain>
+		</table>
+	</response>
+	<!--access end-->
+<vhs  error_400='/vhs/kangle/www/400.html' error_403='/vhs/kangle/www/403.html' error_404='/vhs/kangle/www/404.html'>
+<index id='100' file='index.php'/>
+<index id='100' file='index.html'/>
+<index id='100' file='index.htm'/>
+<env dev='/home' />
+<mime_type ext='*' type='text/plain'/>
+<mime_type ext='3gp' type='video/3gpp'/>
+<mime_type ext='3gpp' type='video/3gpp'/>
+<mime_type ext='7z' type='application/x-7z-compressed'/>
+<mime_type ext='ai' type='application/postscript'/>
+<mime_type ext='aif' type='audio/x-aiff'/>
+<mime_type ext='aifc' type='audio/x-aiff'/>
+<mime_type ext='aiff' type='audio/x-aiff'/>
+<mime_type ext='amr' type='audio/amr'/>
+<mime_type ext='arj' type='application/x-arj-compressed'/>
+<mime_type ext='asf' type='video/x-ms-asf'/>
+<mime_type ext='asx' type='video/x-ms-asf'/>
+<mime_type ext='atom' type='application/atom+xml'/>
+<mime_type ext='au' type='audio/basic'/>
+<mime_type ext='avi' type='video/x-msvideo'/>
+<mime_type ext='bcpio' type='application/x-bcpio'/>
+<mime_type ext='bin' type='application/octet-stream'/>
+<mime_type ext='bmp' type='image/x-bmp' compress='1'/>
+<mime_type ext='bz2' type='application/x-tar'/>
+<mime_type ext='c' type='text/plain'/>
+<mime_type ext='cab' type='application/octet-stream'/>
+<mime_type ext='cc' type='text/plain'/>
+<mime_type ext='cco' type='application/x-cocoa'/>
+<mime_type ext='cdf' type='application/x-netcdf'/>
+<mime_type ext='cod' type='text/x-co-desc'/>
+<mime_type ext='core' type='application/octet-stream'/>
+<mime_type ext='cpio' type='application/x-cpio'/>
+<mime_type ext='cpp' type='text/plain'/>
+<mime_type ext='crt' type='application/x-x509-ca-cert'/>
+<mime_type ext='csh' type='application/x-csh'/>
+<mime_type ext='cso' type='application/octet-stream'/>
+<mime_type ext='css' type='text/css' compress='1'/>
+<mime_type ext='csv' type='application/octet-stream'/>
+<mime_type ext='deb' type='application/octet-stream'/>
+<mime_type ext='der' type='application/x-x509-ca-cert'/>
+<mime_type ext='dll' type='application/octet-stream'/>
+<mime_type ext='dmg' type='application/octet-stream'/>
+<mime_type ext='doc' type='application/msword'/>
+<mime_type ext='docx' type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'/>
+<mime_type ext='dvi' type='application/x-dvi'/>
+<mime_type ext='ear' type='application/java-archive'/>
+<mime_type ext='eot' type='application/vnd.ms-fontobject'/>
+<mime_type ext='eps' type='application/postscript'/>
+<mime_type ext='etx' type='text/x-setext'/>
+<mime_type ext='exe' type='application/octet-stream'/>
+<mime_type ext='f90' type='text/plain'/>
+<mime_type ext='flv' type='video/x-flv'/>
+<mime_type ext='gif' type='image/gif' compress='1'/>
+<mime_type ext='gtar' type='application/x-gtar'/>
+<mime_type ext='gz' type='application/x-gzip'/>
+<mime_type ext='gzip' type='application/x-gzip'/>
+<mime_type ext='h' type='text/plain'/>
+<mime_type ext='hdf' type='application/x-hdf'/>
+<mime_type ext='hh' type='text/plain'/>
+<mime_type ext='hqx' type='application/mac-binhex40'/>
+<mime_type ext='htc' type='text/x-component'/>
+<mime_type ext='htm' type='text/html' compress='1'/>
+<mime_type ext='html' type='text/html' compress='1'/>
+<mime_type ext='ico' type='image/x-icon'/>
+<mime_type ext='ief' type='image/ief'/>
+<mime_type ext='iso' type='application/octet-stream'/>
+<mime_type ext='jad' type='text/vnd.sun.j2me.app-descriptor'/>
+<mime_type ext='jar' type='application/java-archive'/>
+<mime_type ext='jardiff' type='application/x-java-archive-diff'/>
+<mime_type ext='jng' type='image/x-jng'/>
+<mime_type ext='jnlp' type='application/x-java-jnlp-file'/>
+<mime_type ext='jpe' type='image/jpeg'/>
+<mime_type ext='jpeg' type='image/jpeg' compress='1'/>
+<mime_type ext='jpg' type='image/jpeg' compress='1'/>
+<mime_type ext='js' type='application/javascript' compress='1'/>
+<mime_type ext='json' type='application/json' compress='1'/>
+<mime_type ext='kar' type='audio/midi'/>
+<mime_type ext='kml' type='application/vnd.google-earth.kml+xml'/>
+<mime_type ext='kmz' type='application/vnd.google-earth.kmz'/>
+<mime_type ext='latex' type='application/x-latex'/>
+<mime_type ext='lha' type='application/x-lha-compressed'/>
+<mime_type ext='lsm' type='text/plain'/>
+<mime_type ext='lzh' type='application/x-lha-compressed'/>
+<mime_type ext='m' type='text/plain'/>
+<mime_type ext='m3u8' type='application/vnd.apple.mpegurl'/>
+<mime_type ext='m4a' type='audio/x-m4a'/>
+<mime_type ext='m4v' type='video/x-m4v'/>
+<mime_type ext='man' type='application/x-troff-man'/>
+<mime_type ext='mbm' type='image/x-epoc-mbm'/>
+<mime_type ext='me' type='application/x-troff-me'/>
+<mime_type ext='mid' type='audio/midi'/>
+<mime_type ext='midi' type='audio/midi'/>
+<mime_type ext='mif' type='application/x-mif'/>
+<mime_type ext='mmf' type='application/x-smaf'/>
+<mime_type ext='mml' type='text/mathml'/>
+<mime_type ext='mng' type='video/x-mng'/>
+<mime_type ext='mov' type='video/quicktime'/>
+<mime_type ext='movie' type='video/x-sgi-movie'/>
+<mime_type ext='mp2' type='audio/basic'/>
+<mime_type ext='mp3' type='audio/mpeg'/>
+<mime_type ext='mp4' type='video/mp4'/>
+<mime_type ext='mpe' type='video/mpeg'/>
+<mime_type ext='mpeg' type='video/mpeg'/>
+<mime_type ext='mpg' type='video/mpeg'/>
+<mime_type ext='ms' type='application/x-troff-ms'/>
+<mime_type ext='msi' type='application/octet-stream'/>
+<mime_type ext='msm' type='application/octet-stream'/>
+<mime_type ext='msp' type='application/octet-stream'/>
+<mime_type ext='msw' type='application/msword'/>
+<mime_type ext='mwrt' type='application/macwriteii'/>
+<mime_type ext='n3a' type='image/vnd.nok-3dscreensaver'/>
+<mime_type ext='nc' type='application/x-netcdf'/>
+<mime_type ext='ngd' type='application/x-nokiagamedata'/>
+<mime_type ext='nok' type='image/vnd.nok-oplogo-colornokia-op-logo'/>
+<mime_type ext='nqd' type='application/vnd.nokia.gamedata'/>
+<mime_type ext='oda' type='application/oda'/>
+<mime_type ext='odg' type='application/vnd.oasis.opendocument.graphics'/>
+<mime_type ext='odp' type='application/vnd.oasis.opendocument.presentation'/>
+<mime_type ext='ods' type='application/vnd.oasis.opendocument.spreadsheet'/>
+<mime_type ext='odt' type='application/vnd.oasis.opendocument.text'/>
+<mime_type ext='ogg' type='audio/ogg'/>
+<mime_type ext='pbm' type='image/x-portable-bitmap'/>
+<mime_type ext='pdb' type='application/x-pilot'/>
+<mime_type ext='pdf' type='application/pdf'/>
+<mime_type ext='pem' type='application/x-x509-ca-cert'/>
+<mime_type ext='pgm' type='image/x-portable-graymap'/>
+<mime_type ext='pic' type='application/pict'/>
+<mime_type ext='pict' type='application/pict'/>
+<mime_type ext='pl' type='application/x-perl'/>
+<mime_type ext='pm' type='application/x-perl'/>
+<mime_type ext='pmd' type='application/x-pmd'/>
+<mime_type ext='png' type='image/png' compress='1'/>
+<mime_type ext='pnm' type='image/x-portable-anymap'/>
+<mime_type ext='ppm' type='image/x-portable-pixmap'/>
+<mime_type ext='ppt' type='application/vnd.ms-powerpoint'/>
+<mime_type ext='pptx' type='application/vnd.openxmlformats-officedocument.presentationml.presentation'/>
+<mime_type ext='prc' type='application/x-pilot'/>
+<mime_type ext='ps' type='application/postscript'/>
+<mime_type ext='qcp' type='audio/vnd.qcelp'/>
+<mime_type ext='qt' type='video/quicktime'/>
+<mime_type ext='ra' type='audio/x-realaudio'/>
+<mime_type ext='rar' type='application/x-rar-compressed'/>
+<mime_type ext='ras' type='image/cmu-raster'/>
+<mime_type ext='rgb' type='image/x-rgb'/>
+<mime_type ext='rng' type='application/vnd.nokie.ringing-tone'/>
+<mime_type ext='roff' type='application/x-troff'/>
+<mime_type ext='rpm' type='application/x-redhat-package-manager'/>
+<mime_type ext='rss' type='application/rss+xml'/>
+<mime_type ext='rtf' type='application/rtf'/>
+<mime_type ext='rtx' type='text/richtext'/>
+<mime_type ext='run' type='application/x-makeself'/>
+<mime_type ext='sea' type='application/x-sea'/>
+<mime_type ext='sh' type='application/x-sh'/>
+<mime_type ext='shar' type='application/x-shar'/>
+<mime_type ext='si' type='text/vnd.wap.si'/>
+<mime_type ext='sic' type='application/vnd.wap.sic'/>
+<mime_type ext='sis' type='application/vnd.symbian.install'/>
+<mime_type ext='sit' type='application/stuffit'/>
+<mime_type ext='sl' type='text/vnd.wap.sl'/>
+<mime_type ext='slc' type='application/vnd.wap.slc'/>
+<mime_type ext='snd' type='audio/basic'/>
+<mime_type ext='src' type='application/x-wais-source'/>
+<mime_type ext='sv4cpio' type='application/x-sv4cpio'/>
+<mime_type ext='sv4crc' type='application/x-sv4crc'/>
+<mime_type ext='svg' type='image/svg+xml' compress='1'/>
+<mime_type ext='svgz' type='image/svg+xml' compress='1'/>
+<mime_type ext='swf' type='application/x-shockwave-flash'/>
+<mime_type ext='t' type='application/x-troff'/>
+<mime_type ext='tar' type='application/x-tar'/>
+<mime_type ext='tcl' type='application/x-tcl'/>
+<mime_type ext='tex' type='application/x-tex'/>
+<mime_type ext='texi' type='application/x-texinfo'/>
+<mime_type ext='texinfo' type='application/x-texinfo'/>
+<mime_type ext='tgz' type='application/x-compressed'/>
+<mime_type ext='tif' type='image/tiff' compress='1'/>
+<mime_type ext='tiff' type='image/tiff' compress='1'/>
+<mime_type ext='tk' type='application/x-tcl'/>
+<mime_type ext='tr' type='application/x-troff'/>
+<mime_type ext='ts' type='video/mp2t'/>
+<mime_type ext='tsv' type='text/tab-separated-values'/>
+<mime_type ext='ustar' type='application/x-ustar'/>
+<mime_type ext='vcf' type='text/v-vcard'/>
+<mime_type ext='vcs' type='text/x-vcalendar'/>
+<mime_type ext='war' type='application/java-archive'/>
+<mime_type ext='wasm' type='application/wasm'/>
+<mime_type ext='wav' type='audio/x-wav'/>
+<mime_type ext='wbmp' type='image/vnd.wap.wmbp'/>
+<mime_type ext='webm' type='video/webm'/>
+<mime_type ext='webp' type='image/webp' compress='1'/>
+<mime_type ext='wml' type='text/vnd.wap.wml' compress='1'/>
+<mime_type ext='wmlc' type='application/vnd.wap.wmlc'/>
+<mime_type ext='wmls' type='text/vnd.wap.wmlscript' compress='1'/>
+<mime_type ext='wmlsc' type='text/vnd.wap.wmlscript' compress='1'/>
+<mime_type ext='wmv' type='video/x-ms-wmv'/>
+<mime_type ext='woff' type='font/woff'/>
+<mime_type ext='woff2' type='font/woff2'/>
+<mime_type ext='xbm' type='image/x-xbitmap'/>
+<mime_type ext='xhtml' type='application/xhtml+xml'/>
+<mime_type ext='xls' type='application/msexcel'/>
+<mime_type ext='xlsx' type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'/>
+<mime_type ext='xml' type='text/xml' compress='1'/>
+<mime_type ext='xpi' type='application/x-xpinstall'/>
+<mime_type ext='xpm' type='image/x-xpixmap'/>
+<mime_type ext='xspf' type='application/xspf+xml'/>
+<mime_type ext='xwd' type='image/x-xwindowdump'/>
+<mime_type ext='xz' type='application/x-compress'/>
+<mime_type ext='z' type='application/x-compress'/>
+<mime_type ext='zip' type='application/x-zip-compressed'/>
+<mime_type ext='zlib' type='application/x-deflate'/>
+</vhs>
+	<!--vh start-->
+<vh name='default' doc_root='www'  inherit='on' app='1'>
+<mime_type ext='html' type='text/html' compress='1' max_age='60'/>
+<host>*</host>
+</vh>
+	<!--vh end-->
+</config>
