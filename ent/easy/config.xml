@@ -20,6 +20,8 @@
 	<bl_time>1800</bl_time>
 	<unix_socket>1</unix_socket>
 	<path_info>1</path_info>
+	<access_log>access.log</access_log>
+	<access_log_handle><![CDATA[/vhs/kangle/bin/webalizer -F clf -p -Q -o ${log_dir}/../webalizer/ ${log_file}]]></access_log_handle>
 	<log_handle_concurrent>2</log_handle_concurrent>
 	<log level='3' rotate_time='0 0 * * *' rotate_size='100M' error_rotate_size='100M' logs_day='7' logs_size='2G' log_handle='1'/>
 	<auth_delay>5</auth_delay>
@@ -43,6 +45,8 @@
 	<!--writeback end-->
 	<!--access start-->
 	<request action='vhs' >
+		<table name='!cdn_table'>
+		</table>
 		<table name='BEGIN'>
 			<chain  action='deny' >
 				<mark_check_black_list  > </mark_check_black_list>
@@ -64,7 +68,7 @@
 	<response action='allow' >
 		<table name='BEGIN'>
 			<chain  action='continue' >
-				<acl_file_ext  icase='1' split='|'>3gp|avi|bdmv|bmp|css|f4v|flv|gif|ico|img|jpeg|jpg|js|log|map|mkv|mp3|mp4|png|swf|wolf|wolf2|webp</acl_file_ext>
+				<acl_file_ext  icase='1' split='|'>3gp|avi|bdmv|bmp|css|f4v|flv|gif|ico|img|jpeg|jpg|js|log|map|mkv|mp3|mp4|png|swf|webp|wolf|wolf2</acl_file_ext>
 				<acl_status_code op='lt' code='400'></acl_status_code>
 				<mark_cache_control   max_age='31536000'></mark_cache_control>
 			</chain>
@@ -79,7 +83,8 @@
 <index id='100' file='index.php'/>
 <index id='100' file='index.html'/>
 <index id='100' file='index.htm'/>
-<env dev='/home' />
+<env dev='' />
+<map file_ext='php' extend='cmd:php55' confirm_file='0' allow_method='*'/>
 <mime_type ext='*' type='text/plain'/>
 <mime_type ext='3gp' type='video/3gpp'/>
 <mime_type ext='3gpp' type='video/3gpp'/>
@@ -292,3 +297,5 @@
 </vh>
 	<!--vh end-->
 </config>
+
+<!--configfileisok-->
