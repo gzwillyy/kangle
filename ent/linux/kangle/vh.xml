@@ -1,0 +1,16 @@
+<!-- 定义虚拟主机(vhs) -->
+<vhs index='默认文件列表(每个文件列表按,分开)' error_错误代码='网址'>
+    <!-- 定义虚拟主机(vh) -->
+    <vh doc_root='主目录' log_file='日志文件' inherit='是否继承虚拟主机集的设置(on或off)' browse='是否可以浏览(on或off)'>
+        <!-- 映射扩展(可以在vhs下也可以在vh下 -->
+        <!-- 这个是按文件扩展名来映射 -->
+        <map file_ext='文件扩展名' extend='扩展类型:扩展名'>
+        <!-- 下面是按目录映射 -->
+        <map path='路径' extend='扩展类型:扩展名'>
+        <ip>绑定IP(*表示全部)</ip>
+        <port>绑定端口(*表示全部)</port>
+        <host dir='子目录'>主机头(*表示默认)</host>
+    </vh>
+</vhs>
+
+<!-- 注意:每次修改了vh.xml文件，我们可以运行 kangle --revh 来重新加载vh.xml文件 -->
